@@ -40,7 +40,7 @@ class SpGatewayProvider extends Provider implements ProviderInterface
         if (is_numeric($expire_Date)) $expire_Date = intval($expire_Date);
         if (is_string($expire_Date)) $expire_Date = intval(strtotime($expire_Date));
 
-        $this->order['ExpireDate'] = $expire_Date;
+        $this->order['ExpireDate'] = date('Ymd', $expire_Date);
     }
 
     public function setUnionPay()
