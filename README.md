@@ -26,3 +26,25 @@ Available soon
 
 * [綠界 ECPay](https://www.ecpay.com.tw)
 * [歐付寶 allPay](https://www.allpay.com.tw/)
+
+
+How to use
+----------
+
+```php
+require_once 'vendor/autoload.php';
+
+use VoiceTube\TaiwanPaymentGateway;
+
+$sp = TaiwanPaymentGateway\PaymentGateway::factory('SpGateway', [
+    'hashKey'       => 'XXXX',
+    'hashIV'        => 'XXXXX',
+    'merchantId'    => 'XXX',
+    'version'       => '1.2',
+    'actionUrl'     => 'https://ccore.spgateway.com/MPG/mpg_gateway',
+    'returnUrl'     => 'https://localhost/payment/confirm',
+    'notifyUrl'     => '',
+    'clientBackUrl' => 'https://localhost/payment/return',
+    'paymentInfoUrl'=> 'https://localhost/payment/information',
+]);
+```
