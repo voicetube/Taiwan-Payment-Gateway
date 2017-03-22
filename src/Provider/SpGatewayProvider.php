@@ -70,6 +70,8 @@ class SpGatewayProvider extends Provider implements ProviderInterface
 
     public function matchCheckCode($payload)
     {
+        $matched_code = $payload['CheckCode'];
+
         $check_code = [
             "Amt" => $payload['Amt'],
             "TradeNo" => $payload['TradeNo'],
@@ -79,9 +81,11 @@ class SpGatewayProvider extends Provider implements ProviderInterface
 
         ksort($check_code);
 
-        $check_str = array_merge(['HashKey' => $this->hashKey], $check_code, ['HashIV' => $this->hashIV]);
+        $check_code = array_merge(['HashIV' => $this->hashIV], $check_code, ['HashKey' => $this->hashKey]);
 
-        return strtoupper(hash("sha256", $check_str));
+        $check_str = http_build_query($check_code);
+
+        return $matched_code == strtoupper(hash("sha256", $check_str));
     }
 
     public function getOrder()
