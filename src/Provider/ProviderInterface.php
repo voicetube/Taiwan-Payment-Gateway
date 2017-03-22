@@ -25,7 +25,7 @@ interface ProviderInterface
         $timestamp = 0
     );
 
-    public function processOrder($payload);
+    public function processOrder($type = 'JSON');
 
     public function setUnionPay();
     public function setOrderExpire($expire_Date);

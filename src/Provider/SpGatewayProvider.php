@@ -142,13 +142,31 @@ class SpGatewayProvider extends Provider implements ProviderInterface
         if (!empty($this->clientBackUrl)) $this->order['ClientBackURL'] = $this->clientBackUrl;
     }
 
-    public function processOrder($payload)
+    public function processOrder($type = 'JSON')
     {
-        if (empty($payload["Result"]['CheckCode'])) return false;
+        switch($type) {
+            case 'JSON':
+                return $this->processOrderJson();
+            break;
+            default:
+                return false;
+            break;
+        }
+    }
 
-        if ($this->matchCheckCode($payload["Result"]) == false) return false;
+    public function processOrderJson()
+    {
+        if (!isset($_POST['JSONData'])) return false;
 
-        return $payload["Result"];
+        $post = json_decode($_POST['JSONData'], true);
+
+        if ($post['Status'] !== 'SUCCESS') return false;
+
+        $result = json_decode($post['Result'], true);
+
+        $result['matched'] = $this->matchCheckCode($result);
+
+        return $result;
     }
 
     public function genForm()
