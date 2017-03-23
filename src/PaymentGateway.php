@@ -34,4 +34,16 @@ class PaymentGateway
 	{
 		return new Provider\SpGatewayProvider($config);
     }
+
+    /**
+	 * 綠界 ECPay
+	 * https://www.ecpay.com.tw
+	 *
+	 * @param array $config
+	 * @return Provider\EcPayProvider
+	 */
+	public static function EcPay(array $config = [])
+	{
+		return new Provider\EcPayProvider($config);
+    }
 }

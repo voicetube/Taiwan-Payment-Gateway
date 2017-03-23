@@ -241,4 +241,8 @@ class SpGatewayProvider extends Provider implements ProviderInterface
         return $html;
     }
 
+	public function rspOk() { return true; }
+
+	public function rspError($msg = '') { return true; }
+
 }

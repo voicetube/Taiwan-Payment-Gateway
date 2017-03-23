@@ -87,4 +87,15 @@ interface ProviderInterface
 	 * @return string
 	 */
 	public function genForm($auto_submit = true);
+
+	/**
+	 * @return boolean
+	 */
+	public function rspOk();
+
+	/**
+	 * @param string $msg
+	 * @return boolean
+	 */
+	public function rspError($msg = '');
 }
