@@ -28,11 +28,12 @@ class SpGatewayProvider extends Provider implements ProviderInterface
         if (empty($this->version)) $this->version = '1.2';
     }
 
-    public function needExtraPaidInfo() {}
+    public function needExtraPaidInfo() { return true; }
 
     public function setCreditInstallment($months, $total_amount = 0)
     {
         $this->order['InstFlag'] = $months;
+        return true;
     }
 
     public function setOrderExpire($expire_Date)
@@ -41,12 +42,14 @@ class SpGatewayProvider extends Provider implements ProviderInterface
         if (is_string($expire_Date)) $expire_Date = intval(strtotime($expire_Date));
 
         $this->order['ExpireDate'] = date('Ymd', $expire_Date);
+	    return true;
     }
 
     public function setUnionPay()
     {
         $this->order['UNIONPAY'] = 1;
         if (isset($this->order[PG_PAY_METHOD_CREDIT])) unset($this->order[PG_PAY_METHOD_CREDIT]);
+        return true;
     }
 
     public function genCheckValue()
@@ -68,7 +71,7 @@ class SpGatewayProvider extends Provider implements ProviderInterface
         return strtoupper(hash("sha256", $check_mer_str));
     }
 
-    public function matchCheckCode($payload)
+    public function matchCheckCode(array $payload = [])
     {
         $matched_code = $payload['CheckCode'];
 
@@ -140,21 +143,27 @@ class SpGatewayProvider extends Provider implements ProviderInterface
         if (!empty($this->notifyUrl)) $this->order['NotifyURL'] = $this->notifyUrl;
         if (!empty($this->paymentInfoUrl)) $this->order['CustomerURL'] = $this->paymentInfoUrl;
         if (!empty($this->clientBackUrl)) $this->order['ClientBackURL'] = $this->clientBackUrl;
+
+        return true;
     }
 
-    public function processOrder($type = 'JSON')
+	public function processOrder($type = 'JSON')
     {
         switch($type) {
             case 'JSON':
                 return $this->processOrderJson();
             break;
+            case 'POST':
             default:
-                return false;
+	            return $this->processOrderPost();
             break;
         }
     }
 
-    public function processOrderJson()
+	/**
+	 * @return bool|array
+	 */
+	public function processOrderJson()
     {
         if (!isset($_POST['JSONData'])) return false;
 
@@ -169,7 +178,53 @@ class SpGatewayProvider extends Provider implements ProviderInterface
         return $result;
     }
 
-    public function genForm()
+	/**
+	 * @return bool|array
+	 */
+	public function processOrderPost()
+    {
+        if (!isset($_POST)) return false;
+        if (empty($_POST)) return false;
+
+	    $post = filter_var_array($_POST, [
+		    'Status'            => FILTER_SANITIZE_STRING,
+		    'Message'           => FILTER_SANITIZE_STRING,
+		    'MerchantID'        => FILTER_SANITIZE_STRING,
+		    'Amt'               => FILTER_VALIDATE_INT,
+		    'TradeNo'           => FILTER_SANITIZE_STRING,
+		    'MerchantOrderNo'   => FILTER_SANITIZE_STRING,
+		    'PaymentType'       => FILTER_SANITIZE_STRING,
+		    'RespondType'       => FILTER_SANITIZE_STRING,
+		    'CheckCode'         => FILTER_SANITIZE_STRING,
+		    'PayTime'           => FILTER_SANITIZE_STRING,
+		    'IP'                => FILTER_VALIDATE_IP,
+		    'EscrowBank'        => FILTER_SANITIZE_STRING,
+		    'TokenUseStatus'    => FILTER_VALIDATE_INT,
+		    'RespondCode'       => FILTER_SANITIZE_STRING,
+		    'Auth'              => FILTER_SANITIZE_STRING,
+		    'Card6No'           => FILTER_SANITIZE_STRING,
+		    'Card4No'           => FILTER_SANITIZE_STRING,
+		    'Inst'              => FILTER_VALIDATE_INT,
+		    'InstFirst'         => FILTER_VALIDATE_INT,
+		    'InstEach'          => FILTER_VALIDATE_INT,
+		    'ECI'               => FILTER_SANITIZE_STRING,
+		    'PayBankCode'       => FILTER_SANITIZE_STRING,
+		    'PayerAccount5Code' => FILTER_SANITIZE_STRING,
+		    'CodeNo'            => FILTER_SANITIZE_STRING,
+		    'Barcode_1'         => FILTER_SANITIZE_STRING,
+		    'Barcode_2'         => FILTER_SANITIZE_STRING,
+		    'Barcode_3'         => FILTER_SANITIZE_STRING,
+		    'PayStore'          => FILTER_SANITIZE_STRING
+	    ], false);
+
+        if ($post['Status'] !== 'SUCCESS') return false;
+
+	    $post['matched'] = $this->matchCheckCode($post);
+
+        return $post;
+    }
+
+    public function genForm($auto_submit = true)
     {
         $this->order['CheckValue'] = $this->genCheckValue();
 
@@ -181,7 +236,8 @@ class SpGatewayProvider extends Provider implements ProviderInterface
         }
         $html .= "</form>";
 
-        $html .= sprintf("<script>document.getElementById('%s').submit();</script>", $formId);
+        if ($auto_submit) $html .= sprintf("<script>document.getElementById('%s').submit();</script>", $formId);
+
         return $html;
     }
 

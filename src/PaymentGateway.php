@@ -6,10 +6,6 @@ use VoiceTube\TaiwanPaymentGateway\Provider;
 
 class PaymentGateway
 {
-    public function __construct($provider, $config)
-    {
-        return $this->factory($provider, $config);
-    }
 
     /**
      * @param $provider
@@ -25,5 +21,17 @@ class PaymentGateway
         if (class_exists($provider)) return new $provider($config);
         trigger_error('Provider not exists.');
         return false;
+    }
+
+	/**
+	 * 智付通 Spgateway
+	 * https://www.spgateway.com/
+	 *
+	 * @param array $config
+	 * @return Provider\SpGatewayProvider
+	 */
+	public static function SpGateway(array $config = [])
+	{
+		return new Provider\SpGatewayProvider($config);
     }
 }
