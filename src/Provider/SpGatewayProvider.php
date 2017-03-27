@@ -52,6 +52,12 @@ class SpGatewayProvider extends Provider implements ProviderInterface
         return true;
     }
 
+	public function setEmail($email)
+	{
+		$this->order['Email'] = $email;
+		return true;
+    }
+
     public function genCheckValue()
     {
         $mer_array = [
@@ -98,12 +104,11 @@ class SpGatewayProvider extends Provider implements ProviderInterface
 
     public function newOrder(
         $type = PG_PAY_METHOD_CREDIT,
-        $respond_type = 'JSON',
         $merchant_order_no,
         $amount,
         $item_describe,
-        $email,
         $order_comment,
+        $respond_type = 'JSON',
         $timestamp = 0
     ) {
         /**
@@ -134,7 +139,6 @@ class SpGatewayProvider extends Provider implements ProviderInterface
         $this->order['MerchantOrderNo'] = $merchant_order_no;
         $this->order['Amt'] = intval($amount);
         $this->order['ItemDesc'] = $item_describe;
-        $this->order['Email'] = $email;
         $this->order['EmailModify'] = 0;
         $this->order['LoginType'] = 0;
         $this->order['OrderComment'] = $order_comment;

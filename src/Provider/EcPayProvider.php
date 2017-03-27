@@ -134,12 +134,11 @@ class EcPayProvider extends Provider implements ProviderInterface
 
 	public function newOrder(
 		$type = PG_PAY_METHOD_CREDIT,
-		$respond_type = 'POST',
 		$merchant_order_no,
 		$amount,
 		$item_describe,
-		$email,
 		$order_comment,
+		$respond_type = 'POST',
 		$timestamp = 0
 	) {
 		/**
@@ -161,13 +160,6 @@ class EcPayProvider extends Provider implements ProviderInterface
 		$this->clearOrder();
 
 		$this->order['ChoosePayment'] = $type;
-//		$this->order['Remark'] = '';
-//		$this->order['Redeem'] = '';
-//		$this->order['ItemURL'] = '';
-//		$this->order['OrderResultURL'] = '';
-//		$this->order['ChooseSubPayment'] = '';
-//		$this->order['CreditInstallment'] = '';
-//		$this->order['InstallmentAmount'] = '';
 		$this->order['PaymentType'] = 'aio';
 		$this->order['MerchantID'] = $this->merchantId;
 		$this->order['MerchantTradeDate'] = date("Y/m/d H:i:s", $timestamp);

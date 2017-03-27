@@ -109,14 +109,5 @@ $ap = TaiwanPaymentGateway\PaymentGateway::AllPay([
 #### Create new order
 
 ```php
-$gw->newOrder(
-    $type = PG_PAY_METHOD_CREDIT,
-    $respond_type,
-    $merchant_order_no,
-    $amount,
-    $item_describe,
-    $email,
-    $order_comment,
-    $timestamp = 0
-);
+$gw->newOrder($type, $merchant_order_no, $amount, $item_describe, $order_comment, $respond_type, $timestamp);
 ```

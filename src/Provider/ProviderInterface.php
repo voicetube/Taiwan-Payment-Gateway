@@ -20,24 +20,22 @@ interface ProviderInterface
 	/**
 	 * Set a new order
 	 * @param string $type
-	 * @param string $respond_type
 	 * @param string $merchant_order_no
 	 * @param integer|float $amount
 	 * @param string $item_describe
-	 * @param string $email
 	 * @param string $order_comment
+	 * @param string $respond_type
 	 * @param int $timestamp
 	 * @throws \InvalidArgumentException
 	 * @return boolean
 	 */
 	public function newOrder(
         $type = PG_PAY_METHOD_CREDIT,
-        $respond_type,
         $merchant_order_no,
         $amount,
         $item_describe,
-        $email,
         $order_comment,
+        $respond_type,
         $timestamp = 0
     );
 
