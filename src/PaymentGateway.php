@@ -46,4 +46,16 @@ class PaymentGateway
 	{
 		return new Provider\EcPayProvider($config);
     }
+
+    /**
+	 * 歐付寶 allPay
+	 * https://www.allpay.com.tw/
+	 *
+	 * @param array $config
+	 * @return Provider\AllPayProvider
+	 */
+	public static function AllPay(array $config = [])
+	{
+		return new Provider\AllPayProvider($config);
+    }
 }

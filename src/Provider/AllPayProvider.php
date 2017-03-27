@@ -9,7 +9,7 @@
 namespace VoiceTube\TaiwanPaymentGateway\Provider;
 
 
-class EcPayProvider extends Provider implements ProviderInterface
+class AllPayProvider extends Provider implements ProviderInterface
 {
 
 	protected $url_encode_mapping;
@@ -21,14 +21,16 @@ class EcPayProvider extends Provider implements ProviderInterface
 		define('PG_PAY_METHOD_BARCODE', 'BARCODE');
 		define('PG_PAY_METHOD_WEB_ATM', 'WebATM');
 		define('PG_PAY_METHOD_CREDIT', 'Credit');
+		define('PG_PAY_METHOD_TENPAY', 'Tenpay');
+		define('PG_PAY_METHOD_TOPUP', 'TopUpUsed');
 		define('PG_PAY_METHOD_ATM', 'ATM');
 		define('PG_PAY_METHOD_ALL', 'ALL');
 		define('PG_PAY_METHOD_CVS', 'CVS');
 
 		$this->setArrayConfig($config);
 
-		if (empty($this->actionUrl)) $this->actionUrl = 'https://payment.ecpay.com.tw/Cashier/AioCheckOut/';
-		if (empty($this->version)) $this->version = 'V4';
+		if (empty($this->actionUrl)) $this->actionUrl = 'https://payment.allpay.com.tw/Cashier/AioCheckOut/';
+		if (empty($this->version)) $this->version = 'V2';
 
 		$this->url_encode_mapping = [
 			'%2D' => '-',
@@ -69,6 +71,7 @@ class EcPayProvider extends Provider implements ProviderInterface
 			case PG_PAY_METHOD_ATM:
 				$this->order['ExpireDate'] = $expire_Date;
 				break;
+			case PG_PAY_METHOD_TENPAY:
 			case PG_PAY_METHOD_CVS:
 				$this->order['StoreExpireDate'] = mktime(
 					23, 59, 59, date('m'),
