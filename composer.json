@@ -1,7 +1,7 @@
 {
     "name": "voicetube/taiwan-payment-gateway",
     "description": "A payment gateway library for Taiwan.",
-    "keywords": ["payment", "gateway", "Taiwan"],
+    "keywords": ["VoiceTube", "payment", "gateway", "Taiwan"],
     "license": "MIT",
     "authors": [
         {
