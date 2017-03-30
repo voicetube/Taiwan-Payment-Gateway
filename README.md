@@ -113,16 +113,16 @@ $ap = TaiwanPaymentGateway\PaymentGateway::AllPay([
 ```php
 // create new order
 // $respond_type:
-//  SpGateway: `POST` or `JSON`
+//  SpGateway: `POST` or `JSON` (default to 'JSON')
 //  AllPay, EcPay: `POST` only
 $gw->newOrder(
-    $type,
-    $merchant_order_no, 
-    $amount, 
-    $item_describe, 
-    $order_comment, 
-    $respond_type, 
-    $timestamp
+    required:$type,
+    required:$merchant_order_no, 
+    required:$amount, 
+    required:$item_describe, 
+    required:$order_comment, 
+    optional:$respond_type, 
+    optional:$timestamp
 );
 
 // set email (for spgateway)
@@ -131,11 +131,11 @@ $gw->setEmail('bonjour@voicetube.com');
 // Some settings
 $gw->setUnionPay();
 $gw->needExtraPaidInfo();
-$gw->setCreditInstallment(required:$months, optional:$total_amount=0);
-$gw->setOrderExpire($expire_Date);
+$gw->setCreditInstallment(required:$months, optional:$total_amount);
+$gw->setOrderExpire(required:$expire_Date);
 
 // generate post form
-$gw->genForm($auto_submit = true);
+$gw->genForm(optional:$auto_submit = true);
 
 ```
 
