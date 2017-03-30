@@ -8,6 +8,7 @@ Created by [VoiceTube](https://www.voicetube.com/)
 Features
 --------
 
+* Create / Process order
 * PSR-4 autoloading compliant structure
 * Easy to use to any framework or even a plain php file
 
@@ -15,6 +16,7 @@ Todo
 ----
 
 * Unit-Testing with PHPUnit
+* E-Invoice features
 
 Available Gateway
 -----------------
@@ -106,8 +108,85 @@ $ap = TaiwanPaymentGateway\PaymentGateway::AllPay([
 ]);
 ```
 
-#### Create new order
+#### New order
 
 ```php
+// create new order
 $gw->newOrder($type, $merchant_order_no, $amount, $item_describe, $order_comment, $respond_type, $timestamp);
+
+// set email (for spgateway)
+$gw->setEmail('bonjour@voicetube.com');
+
+// generate post form
+$gw->genForm($auto_submit = true);
+
 ```
+
+#### Process order result/information
+
+```php
+// processOrder will catch $_POST fields and clean it
+$result = $gw->processOrder();
+
+// dump the result
+array(22) {
+  ["Status"]=>
+  string(7) "SUCCESS"
+  ["Message"]=>
+  string(12) "授權成功"
+  ["MerchantID"]=>
+  string(9) "MS1234567"
+  ["Amt"]=>
+  int(1200)
+  ["TradeNo"]=>
+  string(17) "17032311330952317"
+  ["MerchantOrderNo"]=>
+  string(15) "1703230034715"
+  ["PaymentType"]=>
+  string(6) "CREDIT"
+  ["RespondType"]=>
+  string(6) "String"
+  ["CheckCode"]=>
+  string(64) "4B3DDA5FE88966928FEB903D6037B06A1A929087046E5E8D7A8CB2778A30D67C"
+  ["PayTime"]=>
+  string(19) "2017-03-23 11:33:09"
+  ["IP"]=>
+  string(12) "XXX.XXX.XXX.XXX"
+  ["EscrowBank"]=>
+  string(3) "KGI"
+  ["TokenUseStatus"]=>
+  int(0)
+  ["RespondCode"]=>
+  string(2) "00"
+  ["Auth"]=>
+  string(6) "930637"
+  ["Card6No"]=>
+  string(6) "400022"
+  ["Card4No"]=>
+  string(4) "1111"
+  ["Inst"]=>
+  int(0)
+  ["InstFirst"]=>
+  int(1200)
+  ["InstEach"]=>
+  int(0)
+  ["ECI"]=>
+  string(0) ""
+  ["matched"]=>
+  bool(true)
+}
+
+// after processing, check the `matched` field.
+
+// for allpay and ecpay, you will need call `rspOk` or `rspError`.
+$gw->rspOk();
+// or
+$gw->rspError();
+
+```
+
+#### Ref.
+
+* [[PDF] SpGateway](https://www.spgateway.com/dw_files/info_api/spgateway_gateway_MPGapi_V1_0_3.pdf)
+* [[PDF] AllPay](https://www.allpay.com.tw/Content/files/allpay_011.pdf)
+* [[PDF] EcPay](https://www.ecpay.com.tw/Content/files/ecpay_011.pdf)
