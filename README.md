@@ -197,7 +197,7 @@ array(22) {
 
 // after processing, check the `matched` field.
 
-// for allpay and ecpay, you will need call `rspOk` or `rspError`.
+// for allpay and ecpay, you will need to call `rspOk` or `rspError`.
 $gw->rspOk();
 // or
 $gw->rspError();
