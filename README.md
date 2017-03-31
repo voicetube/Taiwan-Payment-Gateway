@@ -125,6 +125,14 @@ $gw->needExtraPaidInfo();
 $gw->setCreditInstallment(required:$months, optional:$total_amount);
 $gw->setOrderExpire(required:$expire_Date);
 
+// It can be using like this
+
+$rId = sprintf("VT%s", time());
+$gw->newOrder($rId, 100, rId, $rId)
+   ->useCredit()
+   ->setUnionPay()
+   ->needExtraPaidInfo();
+
 // generate post form
 $gw->genForm(optional:$auto_submit = true);
 
