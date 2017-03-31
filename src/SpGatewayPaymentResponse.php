@@ -1,4 +1,4 @@
-<?php namespace VoiceTube\TaiwanPaymentGateway\SpGateway;
+<?php namespace VoiceTube\TaiwanPaymentGateway;
 
 use VoiceTube\TaiwanPaymentGateway\Common;
 
@@ -8,7 +8,7 @@ use VoiceTube\TaiwanPaymentGateway\Common;
  * Date: 31/03/2017
  * Time: 6:00 PM
  */
-class SpGatewayResponse extends Common\AbstractResponse implements Common\ResponseInterface
+class SpGatewayPaymentResponse extends Common\AbstractResponse implements Common\ResponseInterface
 {
 	public function processOrder($type = 'JSON')
 	{

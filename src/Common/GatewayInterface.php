@@ -19,7 +19,6 @@ interface GatewayInterface
 
 	/**
 	 * Set a new order
-	 * @param string $type
 	 * @param string $merchant_order_no
 	 * @param integer|float $amount
 	 * @param string $item_describe
@@ -27,7 +26,7 @@ interface GatewayInterface
 	 * @param string $respond_type
 	 * @param int $timestamp
 	 * @throws \InvalidArgumentException
-	 * @return boolean
+	 * @return GatewayInterface
 	 */
 	public function newOrder(
 		$merchant_order_no,
@@ -39,20 +38,20 @@ interface GatewayInterface
 	);
 
 	/**
-	 * @return boolean
+	 * @return GatewayInterface
 	 */
 	public function setUnionPay();
 
 	/**
 	 * @param integer|string $expire_Date
-	 * @return boolean
+	 * @return GatewayInterface
 	 */
 	public function setOrderExpire($expire_Date);
 
 	/**
 	 * @param integer|string $months
 	 * @param integer $total_amount
-	 * @return boolean
+	 * @return GatewayInterface
 	 */
 	public function setCreditInstallment($months, $total_amount = 0);
 

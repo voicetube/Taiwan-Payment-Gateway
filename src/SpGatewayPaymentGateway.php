@@ -1,4 +1,4 @@
-<?php namespace VoiceTube\TaiwanPaymentGateway\SpGateway;
+<?php namespace VoiceTube\TaiwanPaymentGateway;
 
 use VoiceTube\TaiwanPaymentGateway\Common;
 
@@ -8,7 +8,7 @@ use VoiceTube\TaiwanPaymentGateway\Common;
  * Date: 31/03/2017
  * Time: 5:59 PM
  */
-class SpGatewayGateway extends Common\AbstractGateway implements Common\GatewayInterface
+class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\GatewayInterface
 {
 
 	public function __construct(array $config = [])
@@ -68,6 +68,16 @@ class SpGatewayGateway extends Common\AbstractGateway implements Common\GatewayI
 		return $this->order;
 	}
 
+	/**
+	 * @param string $merchant_order_no
+	 * @param float|int $amount
+	 * @param string $item_describe
+	 * @param string $order_comment
+	 * @param string $respond_type
+	 * @param int $timestamp
+	 * @throws \InvalidArgumentException
+	 * @return SpGatewayPaymentGateway
+	 */
 	public function newOrder(
 		$merchant_order_no,
 		$amount,
