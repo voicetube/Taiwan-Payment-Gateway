@@ -15,7 +15,7 @@ Features
 Todo
 ----
 
-* Laravel support
+* Laravel service provider support
 * Config setting by env
 * Unit-Testing with PHPUnit
 * E-Invoice features
