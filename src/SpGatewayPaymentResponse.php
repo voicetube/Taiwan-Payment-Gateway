@@ -1,18 +1,14 @@
-<?php namespace VoiceTube\TaiwanPaymentGateway;
+<?php
+
+namespace VoiceTube\TaiwanPaymentGateway;
 
 use VoiceTube\TaiwanPaymentGateway\Common;
 
-/**
- * Created by PhpStorm.
- * User: merik
- * Date: 31/03/2017
- * Time: 6:00 PM
- */
 class SpGatewayPaymentResponse extends Common\AbstractResponse implements Common\ResponseInterface
 {
 	public function processOrder($type = 'JSON')
 	{
-		switch($type) {
+		switch ($type) {
 			case 'JSON':
 				return $this->processOrderJson();
 				break;
@@ -92,9 +88,9 @@ class SpGatewayPaymentResponse extends Common\AbstractResponse implements Common
 		$matched_code = $payload['CheckCode'];
 
 		$check_code = [
-			"Amt" => $payload['Amt'],
-			"TradeNo" => $payload['TradeNo'],
-			"MerchantID" => $payload['MerchantID'],
+			"Amt"             => $payload['Amt'],
+			"TradeNo"         => $payload['TradeNo'],
+			"MerchantID"      => $payload['MerchantID'],
 			"MerchantOrderNo" => $payload['MerchantOrderNo'],
 		];
 

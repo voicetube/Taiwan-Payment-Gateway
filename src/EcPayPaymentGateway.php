@@ -1,13 +1,9 @@
-<?php namespace VoiceTube\TaiwanPaymentGateway;
+<?php
+
+namespace VoiceTube\TaiwanPaymentGateway;
 
 use VoiceTube\TaiwanPaymentGateway\Common;
 
-/**
- * Created by PhpStorm.
- * User: merik
- * Date: 31/03/2017
- * Time: 5:59 PM
- */
 class EcPayPaymentGateway extends Common\AbstractGateway implements Common\GatewayInterface
 {
 
@@ -21,35 +17,48 @@ class EcPayPaymentGateway extends Common\AbstractGateway implements Common\Gatew
 		return $this;
 	}
 
-	public function useBarCode() {
+	public function useBarCode()
+	{
 		$this->order['ChoosePayment'] = 'BARCODE';
 		$this->order['PaymentInfoURL'] = $this->paymentInfoUrl;
 		return $this;
 	}
 
-	public function useWebATM() { $this->order['ChoosePayment'] = 'WebATM'; return $this; }
+	public function useWebATM()
+	{
+		$this->order['ChoosePayment'] = 'WebATM';
+		return $this;
+	}
 
-	public function useCredit() { $this->order['ChoosePayment'] = 'Credit'; return $this; }
+	public function useCredit()
+	{
+		$this->order['ChoosePayment'] = 'Credit';
+		return $this;
+	}
 
-	public function useATM() {
+	public function useATM()
+	{
 		$this->order['ChoosePayment'] = 'ATM';
 		$this->order['PaymentInfoURL'] = $this->paymentInfoUrl;
 		return $this;
 	}
 
-	public function useCVS() {
+	public function useCVS()
+	{
 		$this->order['ChoosePayment'] = 'CVS';
 		$this->order['PaymentInfoURL'] = $this->paymentInfoUrl;
 		return $this;
 	}
 
-	public function useALL() {
+	public function useALL()
+	{
 		$this->order['ChoosePayment'] = 'ALL';
 		$this->order['PaymentInfoURL'] = $this->paymentInfoUrl;
 		return $this;
 	}
 
-	public function needExtraPaidInfo() {
+	public function needExtraPaidInfo()
+	{
 		$this->order['NeedExtraPaidInfo'] = 'Y';
 		return $this;
 	}
@@ -110,7 +119,8 @@ class EcPayPaymentGateway extends Common\AbstractGateway implements Common\Gatew
 		$order_comment,
 		$respond_type = 'POST',
 		$timestamp = 0
-	) {
+	)
+	{
 		/**
 		 * Argument Check
 		 */
@@ -143,7 +153,9 @@ class EcPayPaymentGateway extends Common\AbstractGateway implements Common\Gatew
 	public function genForm($auto_submit = true)
 	{
 
-		if (!isset($this->order['ChoosePayment'])) { throw new \InvalidArgumentException('Payment method not set'); }
+		if (!isset($this->order['ChoosePayment'])) {
+			throw new \InvalidArgumentException('Payment method not set');
+		}
 
 		if (
 			$this->order['ChoosePayment'] == 'BARCODE' ||

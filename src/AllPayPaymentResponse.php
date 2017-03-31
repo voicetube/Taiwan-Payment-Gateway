@@ -1,13 +1,9 @@
-<?php namespace VoiceTube\TaiwanPaymentGateway;
+<?php
+
+namespace VoiceTube\TaiwanPaymentGateway;
 
 use VoiceTube\TaiwanPaymentGateway\Common;
 
-/**
- * Created by PhpStorm.
- * User: merik
- * Date: 31/03/2017
- * Time: 6:00 PM
- */
 class AllPayPaymentResponse extends Common\AbstractResponse implements Common\ResponseInterface
 {
 	public function processOrder($type = 'POST')

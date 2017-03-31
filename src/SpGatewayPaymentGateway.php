@@ -1,13 +1,9 @@
-<?php namespace VoiceTube\TaiwanPaymentGateway;
+<?php
+
+namespace VoiceTube\TaiwanPaymentGateway;
 
 use VoiceTube\TaiwanPaymentGateway\Common;
 
-/**
- * Created by PhpStorm.
- * User: merik
- * Date: 31/03/2017
- * Time: 5:59 PM
- */
 class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\GatewayInterface
 {
 
@@ -21,19 +17,47 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
 		return $this;
 	}
 
-	public function useBarCode() { $this->order['BARCODE'] = 1; return $this; }
+	public function useBarCode()
+	{
+		$this->order['BARCODE'] = 1;
+		return $this;
+	}
 
-	public function useWebATM() { $this->order['WEBATM'] = 1; return $this; }
+	public function useWebATM()
+	{
+		$this->order['WEBATM'] = 1;
+		return $this;
+	}
 
-	public function useCredit() { $this->order['CREDIT'] = 1; return $this; }
+	public function useCredit()
+	{
+		$this->order['CREDIT'] = 1;
+		return $this;
+	}
 
-	public function useATM() { $this->order['VACC'] = 1; return $this; }
+	public function useATM()
+	{
+		$this->order['VACC'] = 1;
+		return $this;
+	}
 
-	public function useCVS() { $this->order['CVS'] = 1; return $this; }
+	public function useCVS()
+	{
+		$this->order['CVS'] = 1;
+		return $this;
+	}
 
-	public function triggerEmailModify($mode = false) { $this->order['EmailModify'] = $mode ? 1 : 0; return $this; }
+	public function triggerEmailModify($mode = false)
+	{
+		$this->order['EmailModify'] = $mode ? 1 : 0;
+		return $this;
+	}
 
-	public function onlyLoginMemberCanPay($mode = false) { $this->order['LoginType'] = $mode ? 1 : 0; return $this; }
+	public function onlyLoginMemberCanPay($mode = false)
+	{
+		$this->order['LoginType'] = $mode ? 1 : 0;
+		return $this;
+	}
 
 	public function setCreditInstallment($months, $total_amount = 0)
 	{
@@ -53,7 +77,7 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
 	public function setUnionPay()
 	{
 		$this->order['UNIONPAY'] = 1;
-		if (isset($this->order[PG_PAY_METHOD_CREDIT])) unset($this->order[PG_PAY_METHOD_CREDIT]);
+		if (isset($this->order['CREDIT'])) unset($this->order['CREDIT']);
 		return $this;
 	}
 
@@ -85,7 +109,8 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
 		$order_comment,
 		$respond_type = 'JSON',
 		$timestamp = 0
-	) {
+	)
+	{
 		/**
 		 * Argument Check
 		 */
@@ -101,13 +126,17 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
 
 		$this->clearOrder();
 
-		$this->order['MerchantID'] = $this->merchantId;
-		$this->order['RespondType'] = $respond_type;
-		$this->order['TimeStamp'] = $timestamp;
+		$this->order['Amt'] = intval($amount);
 		$this->order['Version'] = $this->version;
 		$this->order['LangType'] = 'zh-tw';
+		$this->order['TimeStamp'] = $timestamp;
+		$this->order['MerchantID'] = $this->merchantId;
+		$this->order['RespondType'] = $respond_type;
+
+
+
 		$this->order['MerchantOrderNo'] = $merchant_order_no;
-		$this->order['Amt'] = intval($amount);
+
 		$this->order['ItemDesc'] = $item_describe;
 		$this->order['OrderComment'] = $order_comment;
 
@@ -128,7 +157,9 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
 			!isset($this->order['WEBATM']) &&
 			!isset($this->order['VACC']) &&
 			!isset($this->order['CVS'])
-		) { throw new \InvalidArgumentException('Payment method not set'); }
+		) {
+			throw new \InvalidArgumentException('Payment method not set');
+		}
 
 		if (
 			in_array('BARCODE', $this->order) ||
@@ -159,11 +190,11 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
 	public function genCheckValue()
 	{
 		$mer_array = [
-			'MerchantOrderNo'   => $this->order['MerchantOrderNo'],
-			'MerchantID'        => $this->merchantId,
-			'TimeStamp'         => $this->order['TimeStamp'],
-			'Version'           => $this->version,
-			'Amt'               => $this->order['Amt'],
+			'MerchantOrderNo' => $this->order['MerchantOrderNo'],
+			'MerchantID'      => $this->merchantId,
+			'TimeStamp'       => $this->order['TimeStamp'],
+			'Version'         => $this->version,
+			'Amt'             => $this->order['Amt'],
 		];
 
 		ksort($mer_array);

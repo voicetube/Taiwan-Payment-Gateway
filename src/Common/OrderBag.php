@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: merik
- * Date: 31/03/2017
- * Time: 6:09 PM
- */
 
 namespace VoiceTube\TaiwanPaymentGateway\Common;
 
