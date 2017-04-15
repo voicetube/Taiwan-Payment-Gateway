@@ -7,6 +7,11 @@ use VoiceTube\TaiwanPaymentGateway\Common;
 class AllPayPaymentGateway extends Common\AbstractGateway implements Common\GatewayInterface
 {
 
+	/**
+	 * AllPayPaymentGateway constructor.
+	 * @param array $config
+	 * @return AllPayPaymentGateway
+	 */
 	public function __construct(array $config = [])
 	{
 		parent::__construct($config);
@@ -17,6 +22,9 @@ class AllPayPaymentGateway extends Common\AbstractGateway implements Common\Gate
 		return $this;
 	}
 
+	/**
+	 * @return AllPayPaymentGateway
+	 */
 	public function useBarCode()
 	{
 		$this->order['ChoosePayment'] = 'BARCODE';
@@ -24,30 +32,45 @@ class AllPayPaymentGateway extends Common\AbstractGateway implements Common\Gate
 		return $this;
 	}
 
+	/**
+	 * @return AllPayPaymentGateway
+	 */
 	public function useWebATM()
 	{
 		$this->order['ChoosePayment'] = 'WebATM';
 		return $this;
 	}
 
+	/**
+	 * @return AllPayPaymentGateway
+	 */
 	public function useCredit()
 	{
 		$this->order['ChoosePayment'] = 'Credit';
 		return $this;
 	}
 
+	/**
+	 * @return AllPayPaymentGateway
+	 */
 	public function useTenPay()
 	{
 		$this->order['ChoosePayment'] = 'Tenpay';
 		return $this;
 	}
 
+	/**
+	 * @return AllPayPaymentGateway
+	 */
 	public function useTopUp()
 	{
 		$this->order['ChoosePayment'] = 'TopUpUsed';
 		return $this;
 	}
 
+	/**
+	 * @return AllPayPaymentGateway
+	 */
 	public function useATM()
 	{
 		$this->order['ChoosePayment'] = 'ATM';
@@ -55,6 +78,9 @@ class AllPayPaymentGateway extends Common\AbstractGateway implements Common\Gate
 		return $this;
 	}
 
+	/**
+	 * @return AllPayPaymentGateway
+	 */
 	public function useCVS()
 	{
 		$this->order['ChoosePayment'] = 'CVS';
@@ -62,6 +88,9 @@ class AllPayPaymentGateway extends Common\AbstractGateway implements Common\Gate
 		return $this;
 	}
 
+	/**
+	 * @return AllPayPaymentGateway
+	 */
 	public function useALL()
 	{
 		$this->order['ChoosePayment'] = 'ALL';
@@ -69,12 +98,20 @@ class AllPayPaymentGateway extends Common\AbstractGateway implements Common\Gate
 		return $this;
 	}
 
+	/**
+	 * @return AllPayPaymentGateway
+	 */
 	public function needExtraPaidInfo()
 	{
 		$this->order['NeedExtraPaidInfo'] = 'Y';
 		return $this;
 	}
 
+	/**
+	 * @param integer $months
+	 * @param integer $total_amount
+	 * @return AllPayPaymentGateway
+	 */
 	public function setCreditInstallment($months, $total_amount = 0)
 	{
 		$this->order['CreditInstallment'] = $months;
@@ -82,6 +119,10 @@ class AllPayPaymentGateway extends Common\AbstractGateway implements Common\Gate
 		return $this;
 	}
 
+	/**
+	 * @param int|string $expire_Date
+	 * @return AllPayPaymentGateway
+	 */
 	public function setOrderExpire($expire_Date)
 	{
 		if (is_numeric($expire_Date)) $expire_Date = intval($expire_Date);
@@ -104,12 +145,18 @@ class AllPayPaymentGateway extends Common\AbstractGateway implements Common\Gate
 		return $this;
 	}
 
+	/**
+	 * @return AllPayPaymentGateway
+	 */
 	public function setUnionPay()
 	{
 		$this->order['UnionPay'] = 1;
 		return $this;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getOrder()
 	{
 		return $this->order;
@@ -163,6 +210,10 @@ class AllPayPaymentGateway extends Common\AbstractGateway implements Common\Gate
 		return $this;
 	}
 
+	/**
+	 * @param bool $auto_submit
+	 * @return string
+	 */
 	public function genForm($auto_submit = true)
 	{
 
@@ -193,6 +244,9 @@ class AllPayPaymentGateway extends Common\AbstractGateway implements Common\Gate
 		return $html;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function genCheckValue()
 	{
 		uksort($this->order, 'strcasecmp');

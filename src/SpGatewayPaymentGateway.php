@@ -7,6 +7,11 @@ use VoiceTube\TaiwanPaymentGateway\Common;
 class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\GatewayInterface
 {
 
+	/**
+	 * SpGatewayPaymentGateway constructor.
+	 * @param array $config
+	 * @return SpGatewayPaymentGateway
+	 */
 	public function __construct(array $config = [])
 	{
 		parent::__construct($config);
@@ -17,54 +22,86 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
 		return $this;
 	}
 
+	/**
+	 * @return SpGatewayPaymentGateway
+	 */
 	public function useBarCode()
 	{
 		$this->order['BARCODE'] = 1;
 		return $this;
 	}
 
+	/**
+	 * @return SpGatewayPaymentGateway
+	 */
 	public function useWebATM()
 	{
 		$this->order['WEBATM'] = 1;
 		return $this;
 	}
 
+	/**
+	 * @return SpGatewayPaymentGateway
+	 */
 	public function useCredit()
 	{
 		$this->order['CREDIT'] = 1;
 		return $this;
 	}
 
+	/**
+	 * @return SpGatewayPaymentGateway
+	 */
 	public function useATM()
 	{
 		$this->order['VACC'] = 1;
 		return $this;
 	}
 
+	/**
+	 * @return SpGatewayPaymentGateway
+	 */
 	public function useCVS()
 	{
 		$this->order['CVS'] = 1;
 		return $this;
 	}
 
+	/**
+	 * @param bool $mode
+	 * @return SpGatewayPaymentGateway
+	 */
 	public function triggerEmailModify($mode = false)
 	{
 		$this->order['EmailModify'] = $mode ? 1 : 0;
 		return $this;
 	}
 
+	/**
+	 * @param bool $mode
+	 * @return SpGatewayPaymentGateway
+	 */
 	public function onlyLoginMemberCanPay($mode = false)
 	{
 		$this->order['LoginType'] = $mode ? 1 : 0;
 		return $this;
 	}
 
+	/**
+	 * @param integer $months
+	 * @param integer $total_amount
+	 * @return SpGatewayPaymentGateway
+	 */
 	public function setCreditInstallment($months, $total_amount = 0)
 	{
 		$this->order['InstFlag'] = $months;
 		return $this;
 	}
 
+	/**
+	 * @param int|string $expire_Date
+	 * @return SpGatewayPaymentGateway
+	 */
 	public function setOrderExpire($expire_Date)
 	{
 		if (is_numeric($expire_Date)) $expire_Date = intval($expire_Date);
@@ -74,6 +111,9 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
 		return $this;
 	}
 
+	/**
+	 * @return SpGatewayPaymentGateway
+	 */
 	public function setUnionPay()
 	{
 		$this->order['UNIONPAY'] = 1;
@@ -81,12 +121,24 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
 		return $this;
 	}
 
+	/**
+	 * @param string $email
+	 * @throws \InvalidArgumentException
+	 * @return SpGatewayPaymentGateway
+	 */
 	public function setEmail($email)
 	{
+		$email = filter_var($email, FILTER_VALIDATE_EMAIL);
+
+		if ($email === false) throw new \InvalidArgumentException('Invalid email format');
+
 		$this->order['Email'] = $email;
 		return $this;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getOrder()
 	{
 		return $this->order;
@@ -148,6 +200,10 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
 		return $this;
 	}
 
+	/**
+	 * @param bool $auto_submit
+	 * @return string
+	 */
 	public function genForm($auto_submit = true)
 	{
 
@@ -187,6 +243,9 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
 		return $html;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function genCheckValue()
 	{
 		$mer_array = [

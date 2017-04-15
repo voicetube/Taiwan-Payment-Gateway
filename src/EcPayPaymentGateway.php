@@ -7,6 +7,11 @@ use VoiceTube\TaiwanPaymentGateway\Common;
 class EcPayPaymentGateway extends Common\AbstractGateway implements Common\GatewayInterface
 {
 
+	/**
+	 * EcPayPaymentGateway constructor.
+	 * @param array $config
+	 * @return EcPayPaymentGateway
+	 */
 	public function __construct(array $config = [])
 	{
 		parent::__construct($config);
@@ -17,6 +22,9 @@ class EcPayPaymentGateway extends Common\AbstractGateway implements Common\Gatew
 		return $this;
 	}
 
+	/**
+	 * @return EcPayPaymentGateway
+	 */
 	public function useBarCode()
 	{
 		$this->order['ChoosePayment'] = 'BARCODE';
@@ -24,18 +32,27 @@ class EcPayPaymentGateway extends Common\AbstractGateway implements Common\Gatew
 		return $this;
 	}
 
+	/**
+	 * @return EcPayPaymentGateway
+	 */
 	public function useWebATM()
 	{
 		$this->order['ChoosePayment'] = 'WebATM';
 		return $this;
 	}
 
+	/**
+	 * @return EcPayPaymentGateway
+	 */
 	public function useCredit()
 	{
 		$this->order['ChoosePayment'] = 'Credit';
 		return $this;
 	}
 
+	/**
+	 * @return EcPayPaymentGateway
+	 */
 	public function useATM()
 	{
 		$this->order['ChoosePayment'] = 'ATM';
@@ -43,6 +60,9 @@ class EcPayPaymentGateway extends Common\AbstractGateway implements Common\Gatew
 		return $this;
 	}
 
+	/**
+	 * @return EcPayPaymentGateway
+	 */
 	public function useCVS()
 	{
 		$this->order['ChoosePayment'] = 'CVS';
@@ -50,6 +70,9 @@ class EcPayPaymentGateway extends Common\AbstractGateway implements Common\Gatew
 		return $this;
 	}
 
+	/**
+	 * @return EcPayPaymentGateway
+	 */
 	public function useALL()
 	{
 		$this->order['ChoosePayment'] = 'ALL';
@@ -57,12 +80,20 @@ class EcPayPaymentGateway extends Common\AbstractGateway implements Common\Gatew
 		return $this;
 	}
 
+	/**
+	 * @return EcPayPaymentGateway
+	 */
 	public function needExtraPaidInfo()
 	{
 		$this->order['NeedExtraPaidInfo'] = 'Y';
 		return $this;
 	}
 
+	/**
+	 * @param integer $months
+	 * @param integer $total_amount
+	 * @return EcPayPaymentGateway
+	 */
 	public function setCreditInstallment($months, $total_amount = 0)
 	{
 		$this->order['CreditInstallment'] = $months;
@@ -70,6 +101,10 @@ class EcPayPaymentGateway extends Common\AbstractGateway implements Common\Gatew
 		return $this;
 	}
 
+	/**
+	 * @param int|string $expire_Date
+	 * @return EcPayPaymentGateway
+	 */
 	public function setOrderExpire($expire_Date)
 	{
 		if (is_numeric($expire_Date)) $expire_Date = intval($expire_Date);
@@ -91,12 +126,18 @@ class EcPayPaymentGateway extends Common\AbstractGateway implements Common\Gatew
 		return $this;
 	}
 
+	/**
+	 * @return EcPayPaymentGateway
+	 */
 	public function setUnionPay()
 	{
 		$this->order['UnionPay'] = 1;
 		return $this;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getOrder()
 	{
 		return $this->order;
@@ -150,6 +191,10 @@ class EcPayPaymentGateway extends Common\AbstractGateway implements Common\Gatew
 		return $this;
 	}
 
+	/**
+	 * @param bool $auto_submit
+	 * @return string
+	 */
 	public function genForm($auto_submit = true)
 	{
 
@@ -180,6 +225,9 @@ class EcPayPaymentGateway extends Common\AbstractGateway implements Common\Gatew
 		return $html;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function genCheckValue()
 	{
 		uksort($this->order, 'strcasecmp');

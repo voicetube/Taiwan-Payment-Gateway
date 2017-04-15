@@ -2,7 +2,13 @@
 
 namespace VoiceTube\TaiwanPaymentGateway\Common;
 
-
+/**
+ * Interface GatewayInterface
+ * @package VoiceTube\TaiwanPaymentGateway\Common
+ *
+ * @see AbstractGateway
+ *
+ */
 interface GatewayInterface
 {
 	/**
