@@ -58,15 +58,15 @@ use VoiceTube\TaiwanPaymentGateway;
 */
 
 $gw = TaiwanPaymentGateway\TaiwanPaymentGateway::create('SpGateway', [
-	'hashKey'       => 'fyjEf9sLkim7RdDvGeZZfVcLef5jDyWT',
-	'hashIV'        => '6fxmp07KjuRaHvFo',
-	'merchantId'    => 'MS3606763',
+	'hashKey'       => 'c7fe1bfba42369ec1add502c9917e14d',
+    'hashIV'        => '245a49c8fb5151f0',
+	'merchantId'    => 'MS1234567',
 	'version'       => '1.2',
 	'actionUrl'     => 'https://ccore.spgateway.com/MPG/mpg_gateway',
-	'returnUrl'     => 'https://merik.voicetube.com/hero/payment/v2/confirm',
-	'notifyUrl'     => '',
-	'clientBackUrl' => 'https://merik.voicetube.com/hero/payment/v2/return',
-	'paymentInfoUrl'=> 'https://merik.voicetube.com/hero/payment/v2/information',
+    'returnUrl'     => 'https://localhost/payment/confirm',
+    'notifyUrl'     => 'https://localhost/payment/notify',
+    'clientBackUrl' => 'https://localhost/payment/return',
+    'paymentInfoUrl'=> 'https://localhost/payment/information',
 ]);
 
 
