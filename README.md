@@ -12,14 +12,17 @@ Features
 --------
 
 * Create / Process order
-* PSR-4 autoloading compliant structure
+* Unit-Testing with PHPUnit
+* PSR-4 auto-loading compliant structure
+* Support PHPStorm meta for auto-completion
 * Easy to use to any framework or even a plain php file
 
 Todo
 ----
 
-* Unit-Testing with PHPUnit
+* Payment status
 * E-Invoice features
+* Credit Card cancel / refund API
 
 Available Gateway
 -----------------
@@ -61,11 +64,11 @@ use VoiceTube\TaiwanPaymentGateway;
 */
 
 $gw = TaiwanPaymentGateway\TaiwanPaymentGateway::create('SpGateway', [
-	'hashKey'       => 'c7fe1bfba42369ec1add502c9917e14d',
+    'hashKey'       => 'c7fe1bfba42369ec1add502c9917e14d',
     'hashIV'        => '245a49c8fb5151f0',
-	'merchantId'    => 'MS1234567',
-	'version'       => '1.2',
-	'actionUrl'     => 'https://ccore.spgateway.com/MPG/mpg_gateway',
+    'merchantId'    => 'MS1234567',
+    'version'       => '1.2',
+    'actionUrl'     => 'https://ccore.spgateway.com/MPG/mpg_gateway',
     'returnUrl'     => 'https://localhost/payment/confirm',
     'notifyUrl'     => 'https://localhost/payment/notify',
     'clientBackUrl' => 'https://localhost/payment/return',

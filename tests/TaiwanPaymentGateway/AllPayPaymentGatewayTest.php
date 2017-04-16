@@ -21,33 +21,33 @@ class AllPayPaymentGatewayTest extends \PHPUnit_Framework_TestCase
 		'ts' => 1492287995
 	];
 
+
+	protected $config = [
+		'hashKey'       => '5294y06JbISpM5x9',
+		'hashIV'        => 'v77hoKGq4kWxNNIS',
+		'merchantId'    => '2000132',
+		'version'       => 'V2',
+		'actionUrl'     => 'https://ccore.spgateway.com/MPG/mpg_gateway',
+		'returnUrl'     => 'https://localhost/tpg/confirm',
+		'notifyUrl'     => '',
+		'clientBackUrl' => 'https://localhost/tpg/return',
+	];
+
 	function __construct($name = null, array $data = [], $dataName = '')
 	{
 		parent::__construct($name, $data, $dataName);
-		$this->gw = new AllPayPaymentGateway([
-			'hashKey'       => 'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
-			'hashIV'        => 'KHQ49UsmwMZJk6D1',
-			'merchantId'    => 'MS11434419',
-			'version'       => '1.2',
-			'actionUrl'     => 'https://ccore.spgateway.com/MPG/mpg_gateway',
-			'returnUrl'     => 'https://localhost/tpg/confirm',
-			'notifyUrl'     => '',
-			'clientBackUrl' => 'https://localhost/tpg/return',
-		]);
+		$this->gw = new AllPayPaymentGateway($this->config);
 	}
 
 	public function testConstruct()
 	{
-		$this->gw = new AllPayPaymentGateway([
-			'hashKey'       => 'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
-			'hashIV'        => 'KHQ49UsmwMZJk6D1',
-			'merchantId'    => 'MS11434419',
-			'version'       => '1.2',
-			'actionUrl'     => 'https://ccore.spgateway.com/MPG/mpg_gateway',
-			'returnUrl'     => 'https://localhost/tpg/confirm',
-			'notifyUrl'     => '',
-			'clientBackUrl' => 'https://localhost/tpg/return',
-		]);
+
+		$config = $this->config;
+
+		unset($config['version']);
+		unset($config['actionUrl']);
+
+		$this->gw = new AllPayPaymentGateway($config);
 		$this->assertInstanceOf(AllPayPaymentGateway::class, $this->gw);
 	}
 
@@ -86,7 +86,8 @@ class AllPayPaymentGatewayTest extends \PHPUnit_Framework_TestCase
 	public function testGenOrderForm()
 	{
 		$this->testNewOrder();
-		$this->gw->useCredit()->needExtraPaidInfo()->setCreditInstallment(3);
+
+		$this->gw->useCredit()->needExtraPaidInfo()->setCreditInstallment(3, $this->order['amount']);
 		$this->assertNotEmpty($this->gw->genForm(false));
 	}
 
@@ -94,7 +95,7 @@ class AllPayPaymentGatewayTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->testNewOrder();
 		$this->gw->useCredit()->setUnionPay();
-		$this->assertNotEmpty($this->gw->genForm(false));
+		$this->assertNotEmpty($this->gw->genForm());
 	}
 
 	public function testPaymentMethodNotSet()
@@ -173,5 +174,169 @@ class AllPayPaymentGatewayTest extends \PHPUnit_Framework_TestCase
 		$this->gw
 			->useALL()
 			->setConfig('paymentInfoUrl', 'https://localhost/payment/information');
+	}
+
+	public function testNewOrderNoHashIv()
+	{
+		try {
+			$config = $this->config;
+
+			unset($config['hashIV']);
+
+			$gw = new AllPayPaymentGateway($config);
+
+			$gw->newOrder($this->order['mid'],
+				$this->order['amount'],
+				$this->order['itemDesc'],
+				$this->order['orderComment'],
+				'JSON',
+				$this->order['ts']
+			);
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('HashIV not set', $e->getMessage());
+		}
+
+	}
+
+	public function testNewOrderNoHashKey()
+	{
+		try {
+
+			$config = $this->config;
+
+			unset($config['hashKey']);
+
+			$gw = new AllPayPaymentGateway($config);
+
+			$gw->newOrder($this->order['mid'],
+				$this->order['amount'],
+				$this->order['itemDesc'],
+				$this->order['orderComment'],
+				'JSON',
+				$this->order['ts']
+			);
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('HashKey not set', $e->getMessage());
+		}
+
+	}
+
+	public function testNewOrderNoMerchantID()
+	{
+		try {
+			$config = $this->config;
+
+			unset($config['merchantId']);
+
+			$gw = new AllPayPaymentGateway($config);
+
+			$gw->newOrder($this->order['mid'],
+				$this->order['amount'],
+				$this->order['itemDesc'],
+				$this->order['orderComment'],
+				'JSON',
+				$this->order['ts']
+			);
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('MerchantID not set', $e->getMessage());
+		}
+
+	}
+
+	public function testNewOrderNoReturnURL()
+	{
+		try {
+			$config = $this->config;
+
+			unset($config['returnUrl']);
+
+			$gw = new AllPayPaymentGateway($config);
+
+			$gw->newOrder($this->order['mid'],
+				$this->order['amount'],
+				$this->order['itemDesc'],
+				$this->order['orderComment'],
+				'JSON',
+				$this->order['ts']
+			);
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('ReturnURL not set', $e->getMessage());
+		}
+
+	}
+
+	public function testNewOrderSetNotifyURL()
+	{
+		$config = $this->config;
+
+		$config['notifyUrl'] = 'https://localhost/tpg/notify';
+
+		$gw = new AllPayPaymentGateway($config);
+
+		$gw->newOrder($this->order['mid'],
+			$this->order['amount'],
+			$this->order['itemDesc'],
+			$this->order['orderComment'],
+			'JSON',
+			$this->order['ts']
+		);
+
+	}
+
+	public function testNewOrderNoNotifyUrl()
+	{
+		try {
+			$config = $this->config;
+
+			unset($config['notifyUrl']);
+
+			$gw = new AllPayPaymentGateway($config);
+
+			$gw->newOrder($this->order['mid'],
+				$this->order['amount'],
+				$this->order['itemDesc'],
+				$this->order['orderComment'],
+				'JSON',
+				$this->order['ts']
+			);
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('NotifyURL not set', $e->getMessage());
+		}
+
+	}
+
+	public function testNewOrderNoActionURL()
+	{
+		try {
+			$gw = new AllPayPaymentGateway($this->config);
+
+			$gw->setConfig('actionUrl', 0);
+
+			$gw->newOrder($this->order['mid'],
+				$this->order['amount'],
+				$this->order['itemDesc'],
+				$this->order['orderComment'],
+				'JSON',
+				$this->order['ts']
+			)->useBarCode();
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('ActionURL not set', $e->getMessage());
+		}
+
+	}
+
+	public function testNewOrderSetPaymentInfoURL()
+	{
+		$gw = new AllPayPaymentGateway($this->config);
+
+		$gw->setConfig('paymentInfoUrl', 'https://localhost/tpg/info');
+
+		$gw->newOrder($this->order['mid'],
+			$this->order['amount'],
+			$this->order['itemDesc'],
+			$this->order['orderComment'],
+			'JSON',
+			$this->order['ts']
+		);
 	}
 }

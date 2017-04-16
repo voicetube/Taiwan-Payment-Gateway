@@ -209,7 +209,7 @@ class AllPayPaymentGateway extends Common\AbstractGateway implements Common\Gate
         if (!isset($this->returnUrl)) {
             throw new \InvalidArgumentException('ReturnURL not set');
         }
-        if (!isset($this->actionUrl)) {
+        if (empty($this->actionUrl)) {
             throw new \InvalidArgumentException('ActionURL not set');
         }
 
@@ -251,7 +251,7 @@ class AllPayPaymentGateway extends Common\AbstractGateway implements Common\Gate
             $this->order['ChoosePayment'] == 'ATM' ||
             $this->order['ChoosePayment'] == 'CVS'
         ) {
-            if (!isset($this->paymentInfoUrl)) {
+            if (empty($this->paymentInfoUrl)) {
                 throw new \InvalidArgumentException('PaymentInfoURL not set');
             }
         }

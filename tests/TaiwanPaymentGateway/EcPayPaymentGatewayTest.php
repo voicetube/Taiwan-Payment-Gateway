@@ -86,7 +86,7 @@ class EcPayPaymentGatewayTest extends \PHPUnit_Framework_TestCase
 	public function testGenOrderForm()
 	{
 		$this->testNewOrder();
-		$this->gw->useCredit()->needExtraPaidInfo()->setCreditInstallment(3);
+		$this->gw->useCredit()->needExtraPaidInfo()->setCreditInstallment(3, $this->order['amount']);
 		$this->assertNotEmpty($this->gw->genForm(false));
 	}
 
@@ -94,7 +94,7 @@ class EcPayPaymentGatewayTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->testNewOrder();
 		$this->gw->useCredit()->setUnionPay();
-		$this->assertNotEmpty($this->gw->genForm(false));
+		$this->assertNotEmpty($this->gw->genForm());
 	}
 
 	public function testPaymentMethodNotSet()
@@ -158,5 +158,202 @@ class EcPayPaymentGatewayTest extends \PHPUnit_Framework_TestCase
 		$this->gw
 			->useALL()
 			->setConfig('paymentInfoUrl', 'https://localhost/payment/information');
+	}
+
+	public function testNewOrderNoHashIv()
+	{
+		try {
+			$gw = new EcPayPaymentGateway([
+				'hashKey'       => 'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
+				'hashIV'        => null, //'KHQ49UsmwMZJk6D1',
+				'merchantId'    => 'MS11434419',
+				'returnUrl'     => 'https://localhost/tpg/confirm',
+				'notifyUrl'     => '',
+				'clientBackUrl' => 'https://localhost/tpg/return',
+			]);
+
+			$gw->newOrder($this->order['mid'],
+				$this->order['amount'],
+				$this->order['itemDesc'],
+				$this->order['orderComment'],
+				'JSON',
+				$this->order['ts']
+			);
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('HashIV not set', $e->getMessage());
+		}
+
+	}
+
+	public function testNewOrderNoHashKey()
+	{
+		try {
+			$gw = new EcPayPaymentGateway([
+				'hashKey'       => null, //'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
+				'hashIV'        => 'KHQ49UsmwMZJk6D1',
+				'merchantId'    => 'MS11434419',
+				'returnUrl'     => 'https://localhost/tpg/confirm',
+				'notifyUrl'     => '',
+				'clientBackUrl' => 'https://localhost/tpg/return',
+			]);
+
+			$gw->newOrder($this->order['mid'],
+				$this->order['amount'],
+				$this->order['itemDesc'],
+				$this->order['orderComment'],
+				'JSON',
+				$this->order['ts']
+			);
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('HashKey not set', $e->getMessage());
+		}
+
+	}
+
+	public function testNewOrderNoMerchantID()
+	{
+		try {
+			$gw = new EcPayPaymentGateway([
+				'hashKey'       => 'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
+				'hashIV'        => 'KHQ49UsmwMZJk6D1',
+				'merchantId'    => null, //'MS11434419',
+				'returnUrl'     => 'https://localhost/tpg/confirm',
+				'notifyUrl'     => '',
+				'clientBackUrl' => 'https://localhost/tpg/return',
+			]);
+
+			$gw->newOrder($this->order['mid'],
+				$this->order['amount'],
+				$this->order['itemDesc'],
+				$this->order['orderComment'],
+				'JSON',
+				$this->order['ts']
+			);
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('MerchantID not set', $e->getMessage());
+		}
+
+	}
+
+	public function testNewOrderNoReturnURL()
+	{
+		try {
+			$gw = new EcPayPaymentGateway([
+				'hashKey'       => 'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
+				'hashIV'        => 'KHQ49UsmwMZJk6D1',
+				'merchantId'    => 'MS11434419',
+				'returnUrl'     => null, //'https://localhost/tpg/confirm',
+				'notifyUrl'     => '',
+				'clientBackUrl' => 'https://localhost/tpg/return',
+			]);
+
+			$gw->newOrder($this->order['mid'],
+				$this->order['amount'],
+				$this->order['itemDesc'],
+				$this->order['orderComment'],
+				'JSON',
+				$this->order['ts']
+			);
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('ReturnURL not set', $e->getMessage());
+		}
+
+	}
+
+	public function testNewOrderSetNotifyURL()
+	{
+		$gw = new EcPayPaymentGateway([
+			'hashKey'       => 'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
+			'hashIV'        => 'KHQ49UsmwMZJk6D1',
+			'merchantId'    => 'MS11434419',
+			'returnUrl'     => 'https://localhost/tpg/confirm',
+			'notifyUrl'     => 'https://localhost/tpg/notify',
+			'clientBackUrl' => 'https://localhost/tpg/return',
+		]);
+
+		$gw->newOrder($this->order['mid'],
+			$this->order['amount'],
+			$this->order['itemDesc'],
+			$this->order['orderComment'],
+			'JSON',
+			$this->order['ts']
+		);
+
+	}
+
+	public function testNewOrderNoNotifyUrl()
+	{
+		try {
+			$gw = new EcPayPaymentGateway([
+				'hashKey'       => 'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
+				'hashIV'        => 'KHQ49UsmwMZJk6D1',
+				'merchantId'    => 'MS11434419',
+				'returnUrl'     => 'https://localhost/tpg/confirm',
+				'notifyUrl'     => null,
+				'clientBackUrl' => 'https://localhost/tpg/return',
+			]);
+
+			$gw->setConfig('paymentInfoUrl', 'https://localhost/tpg/info');
+
+			$gw->newOrder($this->order['mid'],
+				$this->order['amount'],
+				$this->order['itemDesc'],
+				$this->order['orderComment'],
+				'JSON',
+				$this->order['ts']
+			);
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('NotifyURL not set', $e->getMessage());
+		}
+
+	}
+
+	public function testNewOrderNoActionURL()
+	{
+		try {
+			$gw = new EcPayPaymentGateway([
+				'hashKey'       => 'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
+				'hashIV'        => 'KHQ49UsmwMZJk6D1',
+				'merchantId'    => 'MS11434419',
+				'returnUrl'     => 'https://localhost/tpg/confirm',
+				'notifyUrl'     => '',
+				'clientBackUrl' => 'https://localhost/tpg/return',
+			]);
+
+			$gw->setConfig('actionUrl', 0);
+
+			$gw->newOrder($this->order['mid'],
+				$this->order['amount'],
+				$this->order['itemDesc'],
+				$this->order['orderComment'],
+				'JSON',
+				$this->order['ts']
+			)->useBarCode();
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('ActionURL not set', $e->getMessage());
+		}
+
+	}
+
+	public function testNewOrderSetPaymentInfoURL()
+	{
+		$gw = new EcPayPaymentGateway([
+			'hashKey'       => 'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
+			'hashIV'        => 'KHQ49UsmwMZJk6D1',
+			'merchantId'    => 'MS11434419',
+			'returnUrl'     => 'https://localhost/tpg/confirm',
+			'notifyUrl'     => '',
+			'clientBackUrl' => 'https://localhost/tpg/return',
+		]);
+
+		$gw->setConfig('paymentInfoUrl', 'https://localhost/tpg/info');
+
+		$gw->newOrder($this->order['mid'],
+			$this->order['amount'],
+			$this->order['itemDesc'],
+			$this->order['orderComment'],
+			'JSON',
+			$this->order['ts']
+		);
 	}
 }

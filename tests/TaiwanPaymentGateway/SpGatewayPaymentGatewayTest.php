@@ -38,7 +38,20 @@ class SpGatewayPaymentGatewayTest extends \PHPUnit_Framework_TestCase
 
 	public function testConstruct()
 	{
+		$this->gw = new SpGatewayPaymentGateway([
+			'hashKey'       => 'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
+			'hashIV'        => 'KHQ49UsmwMZJk6D1',
+			'merchantId'    => 'MS11434419',
+			'returnUrl'     => 'https://localhost/tpg/confirm',
+			'notifyUrl'     => '',
+			'clientBackUrl' => 'https://localhost/tpg/return',
+		]);
 		$this->assertInstanceOf(SpGatewayPaymentGateway::class, $this->gw);
+	}
+
+	public function testGetExistsConfig()
+	{
+		$this->assertEquals('a73rjr4ocBjDcy6UGltXINJBw2NcdCEo', $this->gw->getConfig('hashKey'));
 	}
 
 	public function testGetNonExistsConfig()
@@ -97,8 +110,8 @@ class SpGatewayPaymentGatewayTest extends \PHPUnit_Framework_TestCase
 	public function testUnionPay()
 	{
 		$this->testNewOrderJSON();
-		$this->gw->setUnionPay();
-		$this->assertNotEmpty($this->gw->genForm(false));
+		$this->gw->useCredit()->setUnionPay();
+		$this->assertNotEmpty($this->gw->genForm(true));
 	}
 
 	public function testUserCanModifyEmail()
@@ -138,6 +151,7 @@ class SpGatewayPaymentGatewayTest extends \PHPUnit_Framework_TestCase
 			$this->assertEquals('Payment method not set', $e->getMessage());
 		}
 	}
+
 	public function testPaymentInfoUrlNotSet()
 	{
 		try{
@@ -182,5 +196,202 @@ class SpGatewayPaymentGatewayTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->testNewOrderJSON();
 		$this->gw->useCVS()->setConfig('paymentInfoUrl', 'https://localhost/payment/information');
+	}
+
+	public function testNewOrderNoHashIv()
+	{
+		try {
+			$gw = new SpGatewayPaymentGateway([
+				'hashKey'       => 'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
+				'hashIV'        => null, //'KHQ49UsmwMZJk6D1',
+				'merchantId'    => 'MS11434419',
+				'returnUrl'     => 'https://localhost/tpg/confirm',
+				'notifyUrl'     => '',
+				'clientBackUrl' => 'https://localhost/tpg/return',
+			]);
+
+			$gw->newOrder($this->order['mid'],
+				$this->order['amount'],
+				$this->order['itemDesc'],
+				$this->order['orderComment'],
+				'JSON',
+				$this->order['ts']
+			);
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('HashIV not set', $e->getMessage());
+		}
+
+	}
+
+	public function testNewOrderNoHashKey()
+	{
+		try {
+			$gw = new SpGatewayPaymentGateway([
+				'hashKey'       => null, //'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
+				'hashIV'        => 'KHQ49UsmwMZJk6D1',
+				'merchantId'    => 'MS11434419',
+				'returnUrl'     => 'https://localhost/tpg/confirm',
+				'notifyUrl'     => '',
+				'clientBackUrl' => 'https://localhost/tpg/return',
+			]);
+
+			$gw->newOrder($this->order['mid'],
+				$this->order['amount'],
+				$this->order['itemDesc'],
+				$this->order['orderComment'],
+				'JSON',
+				$this->order['ts']
+			);
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('HashKey not set', $e->getMessage());
+		}
+
+	}
+
+	public function testNewOrderNoMerchantID()
+	{
+		try {
+			$gw = new SpGatewayPaymentGateway([
+				'hashKey'       => 'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
+				'hashIV'        => 'KHQ49UsmwMZJk6D1',
+				'merchantId'    => null, //'MS11434419',
+				'returnUrl'     => 'https://localhost/tpg/confirm',
+				'notifyUrl'     => '',
+				'clientBackUrl' => 'https://localhost/tpg/return',
+			]);
+
+			$gw->newOrder($this->order['mid'],
+				$this->order['amount'],
+				$this->order['itemDesc'],
+				$this->order['orderComment'],
+				'JSON',
+				$this->order['ts']
+			);
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('MerchantID not set', $e->getMessage());
+		}
+
+	}
+
+	public function testNewOrderNoReturnURL()
+	{
+		try {
+			$gw = new SpGatewayPaymentGateway([
+				'hashKey'       => 'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
+				'hashIV'        => 'KHQ49UsmwMZJk6D1',
+				'merchantId'    => 'MS11434419',
+				'returnUrl'     => null, //'https://localhost/tpg/confirm',
+				'notifyUrl'     => '',
+				'clientBackUrl' => 'https://localhost/tpg/return',
+			]);
+
+			$gw->newOrder($this->order['mid'],
+				$this->order['amount'],
+				$this->order['itemDesc'],
+				$this->order['orderComment'],
+				'JSON',
+				$this->order['ts']
+			);
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('ReturnURL not set', $e->getMessage());
+		}
+
+	}
+
+	public function testNewOrderSetNotifyURL()
+	{
+		$gw = new SpGatewayPaymentGateway([
+			'hashKey'       => 'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
+			'hashIV'        => 'KHQ49UsmwMZJk6D1',
+			'merchantId'    => 'MS11434419',
+			'returnUrl'     => 'https://localhost/tpg/confirm',
+			'notifyUrl'     => 'https://localhost/tpg/notify',
+			'clientBackUrl' => 'https://localhost/tpg/return',
+		]);
+
+		$gw->newOrder($this->order['mid'],
+			$this->order['amount'],
+			$this->order['itemDesc'],
+			$this->order['orderComment'],
+			'JSON',
+			$this->order['ts']
+		);
+
+	}
+
+	public function testNewOrderNoNotifyUrl()
+	{
+		try {
+			$gw = new SpGatewayPaymentGateway([
+				'hashKey'       => 'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
+				'hashIV'        => 'KHQ49UsmwMZJk6D1',
+				'merchantId'    => 'MS11434419',
+				'returnUrl'     => 'https://localhost/tpg/confirm',
+				'notifyUrl'     => null,
+				'clientBackUrl' => 'https://localhost/tpg/return',
+			]);
+
+			$gw->setConfig('paymentInfoUrl', 'https://localhost/tpg/info');
+
+			$gw->newOrder($this->order['mid'],
+				$this->order['amount'],
+				$this->order['itemDesc'],
+				$this->order['orderComment'],
+				'JSON',
+				$this->order['ts']
+			);
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('NotifyURL not set', $e->getMessage());
+		}
+
+	}
+
+	public function testNewOrderNoActionURL()
+	{
+		try {
+			$gw = new SpGatewayPaymentGateway([
+				'hashKey'       => 'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
+				'hashIV'        => 'KHQ49UsmwMZJk6D1',
+				'merchantId'    => 'MS11434419',
+				'returnUrl'     => 'https://localhost/tpg/confirm',
+				'notifyUrl'     => '',
+				'clientBackUrl' => 'https://localhost/tpg/return',
+			]);
+
+			$gw->setConfig('actionUrl', null);
+
+			$gw->newOrder($this->order['mid'],
+				$this->order['amount'],
+				$this->order['itemDesc'],
+				$this->order['orderComment'],
+				'JSON',
+				$this->order['ts']
+			);
+		} catch (\InvalidArgumentException $e) {
+			$this->assertEquals('ActionURL not set', $e->getMessage());
+		}
+
+	}
+
+	public function testNewOrderSetPaymentInfoURL()
+	{
+		$gw = new SpGatewayPaymentGateway([
+			'hashKey'       => 'a73rjr4ocBjDcy6UGltXINJBw2NcdCEo',
+			'hashIV'        => 'KHQ49UsmwMZJk6D1',
+			'merchantId'    => 'MS11434419',
+			'returnUrl'     => 'https://localhost/tpg/confirm',
+			'notifyUrl'     => '',
+			'clientBackUrl' => 'https://localhost/tpg/return',
+		]);
+
+		$gw->setConfig('paymentInfoUrl', 'https://localhost/tpg/info');
+
+		$gw->newOrder($this->order['mid'],
+			$this->order['amount'],
+			$this->order['itemDesc'],
+			$this->order['orderComment'],
+			'JSON',
+			$this->order['ts']
+		);
 	}
 }

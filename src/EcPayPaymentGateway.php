@@ -190,7 +190,7 @@ class EcPayPaymentGateway extends Common\AbstractGateway implements Common\Gatew
         if (!isset($this->returnUrl)) {
             throw new \InvalidArgumentException('ReturnURL not set');
         }
-        if (!isset($this->actionUrl)) {
+        if (empty($this->actionUrl)) {
             throw new \InvalidArgumentException('ActionURL not set');
         }
 
@@ -232,7 +232,7 @@ class EcPayPaymentGateway extends Common\AbstractGateway implements Common\Gatew
             $this->order['ChoosePayment'] == 'ATM' ||
             $this->order['ChoosePayment'] == 'CVS'
         ) {
-            if (!isset($this->paymentInfoUrl)) {
+            if (empty($this->paymentInfoUrl)) {
                 throw new \InvalidArgumentException('PaymentInfoURL not set');
             }
         }
