@@ -13,7 +13,6 @@ use VoiceTube\TaiwanPaymentGateway\TaiwanPaymentGateway;
 class TaiwanPaymentGatewayTest extends \PHPUnit_Framework_TestCase
 {
 	protected $gw;
-	protected $gwr;
 
 	public function testFactory()
 	{
@@ -30,5 +29,26 @@ class TaiwanPaymentGatewayTest extends \PHPUnit_Framework_TestCase
 		]);
 
 		$this->assertEquals('VoiceTube\TaiwanPaymentGateway\SpGatewayPaymentGateway', get_class($this->gw));
+	}
+
+	public function testFactoryWrongProvider()
+	{
+		try {
+			$provider = 'SpGatewa';
+
+			$this->gw = TaiwanPaymentGateway::create($provider, [
+				'hashKey'       => 'c7fe1bfba42369ec1add502c9917e14d',
+				'hashIV'        => '245a49c8fb5151f0',
+				'merchantId'    => 'MS1234567',
+				'version'       => '1.2',
+				'actionUrl'     => 'https://ccore.spgateway.com/MPG/mpg_gateway',
+				'returnUrl'     => 'https://localhost/payment/confirm',
+				'notifyUrl'     => 'https://localhost/payment/notify',
+				'clientBackUrl' => 'https://localhost/payment/return',
+				'paymentInfoUrl'=> 'https://localhost/payment/information',
+			]);
+		} catch (\RuntimeException $e) {
+			$this->assertEquals("Class '\\VoiceTube\\TaiwanPaymentGateway\\{$provider}PaymentGateway' not found", $e->getMessage());
+		}
 	}
 }
