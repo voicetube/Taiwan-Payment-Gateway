@@ -22,7 +22,7 @@ Todo
 
 * Payment status
 * E-Invoice features
-* Credit Card cancel / refund API
+* Credit Card cancel / refund
 
 Available Gateway
 -----------------
