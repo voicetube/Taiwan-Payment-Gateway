@@ -5,48 +5,47 @@ Taiwan Payment Gateway
 
 Created by [VoiceTube](https://www.voicetube.com/)
 
+[![Build Status](https://travis-ci.org/merik-chen/Taiwan-Payment-Gateway.svg?branch=reflow-alpha)](https://travis-ci.org/merik-chen/Taiwan-Payment-Gateway)
+[![Test Coverage](https://codeclimate.com/repos/58f2e68ab05ce9025a0023ca/badges/78424a612ed55896c86d/coverage.svg)](https://codeclimate.com/repos/58f2e68ab05ce9025a0023ca/coverage)
+
 Features
 --------
 
 * Create / Process order
-* PSR-4 autoloading compliant structure
+* Unit-Testing with PHPUnit
+* PSR-4 auto-loading compliant structure
+* Support PHPStorm meta for auto-completion
 * Easy to use to any framework or even a plain php file
 
 Todo
 ----
 
-* Laravel service provider support
-* Config setting by env
-* Unit-Testing with PHPUnit
+* Payment status
 * E-Invoice features
+* Credit Card cancel / refund API
 
 Available Gateway
 -----------------
 
 * [智付通 Spgateway](https://www.spgateway.com)
-* [綠界 ECPay](https://www.ecpay.com.tw)
 * [歐付寶 allPay](https://www.allpay.com.tw/)
+* [綠界 ECPay](https://www.ecpay.com.tw)
+
 
 
 How to use
 ----------
 
-##### Usable providers
-
-* `TaiwanPaymentGateway\PaymentGateway::SpGateway`
-* `TaiwanPaymentGateway\PaymentGateway::AllPay`
-* `TaiwanPaymentGateway\PaymentGateway::EcPay`
-
 #### Accept payment method.
 
-* WebATM  : `PG_PAY_METHOD_WEB_ATM`
-* BarCode : `PG_PAY_METHOD_BARCODE`
-* TenPay  : `PG_PAY_METHOD_TENPAY` (AllPay only)
-* TopUp   : `PG_PAY_METHOD_TOPUP` (AllPay only)
-* Credit  : `PG_PAY_METHOD_CREDIT`
-* ATM : `PG_PAY_METHOD_ATM`
-* CVS : `PG_PAY_METHOD_CVS`
-* ALL : `PG_PAY_METHOD_ALL` (AllPay, EcPay only)
+* WebATM
+* BarCode
+* TenPay (AllPay only)
+* TopUp (AllPay only)
+* Credit
+* ATM
+* CVS
+* ALL (AllPay, EcPay only)
 
 #### Load the library
 
@@ -56,26 +55,15 @@ require_once 'vendor/autoload.php';
 use VoiceTube\TaiwanPaymentGateway;
 ```
 
-#### Initial gateway using factory
+#### Initial the gateway
 
 ```php
-$gw = TaiwanPaymentGateway\PaymentGateway::factory('SpGateway', [
-    'hashKey'       => 'c7fe1bfba42369ec1add502c9917e14d',
-    'hashIV'        => '245a49c8fb5151f0',
-    'merchantId'    => 'MS1234567',
-    'version'       => '1.2',
-    'actionUrl'     => 'https://ccore.spgateway.com/MPG/mpg_gateway',
-    'returnUrl'     => 'https://localhost/payment/confirm',
-    'notifyUrl'     => 'https://localhost/payment/notify',
-    'clientBackUrl' => 'https://localhost/payment/return',
-    'paymentInfoUrl'=> 'https://localhost/payment/information',
-]);
-```
 
-#### or Initial from specify gateway
+/**
+* Use factory to create gateway or directly new the gateway
+*/
 
-```php
-$gw = TaiwanPaymentGateway\PaymentGateway::SpGateway([
+$gw = TaiwanPaymentGateway\TaiwanPaymentGateway::create('SpGateway', [
     'hashKey'       => 'c7fe1bfba42369ec1add502c9917e14d',
     'hashIV'        => '245a49c8fb5151f0',
     'merchantId'    => 'MS1234567',
@@ -87,7 +75,20 @@ $gw = TaiwanPaymentGateway\PaymentGateway::SpGateway([
     'paymentInfoUrl'=> 'https://localhost/payment/information',
 ]);
 
-$ec = TaiwanPaymentGateway\PaymentGateway::EcPay([
+
+$sp = new TaiwanPaymentGateway\SpGatewayPaymentGateway([
+    'hashKey'       => 'c7fe1bfba42369ec1add502c9917e14d',
+    'hashIV'        => '245a49c8fb5151f0',
+    'merchantId'    => 'MS1234567',
+    'version'       => '1.2',
+    'actionUrl'     => 'https://ccore.spgateway.com/MPG/mpg_gateway',
+    'returnUrl'     => 'https://localhost/payment/confirm',
+    'notifyUrl'     => 'https://localhost/payment/notify',
+    'clientBackUrl' => 'https://localhost/payment/return',
+    'paymentInfoUrl'=> 'https://localhost/payment/information',
+]);
+
+$ec = new TaiwanPaymentGateway\EcPayPaymentGateway([
     'hashKey'       => '5294y06JbISpM5x9',
     'hashIV'        => 'v77hoKGq4kWxNNIS',
     'merchantId'    => '2000132',
@@ -98,7 +99,7 @@ $ec = TaiwanPaymentGateway\PaymentGateway::EcPay([
     'paymentInfoUrl'=> 'https://localhost/payment/information',
 ]);
 
-$ap = TaiwanPaymentGateway\PaymentGateway::AllPay([
+$ap = new TaiwanPaymentGateway\AllPayPaymentGateway([
     'hashKey'       => '5294y06JbISpM5x9',
     'hashIV'        => 'v77hoKGq4kWxNNIS',
     'merchantId'    => '2000132',
@@ -111,6 +112,7 @@ $ap = TaiwanPaymentGateway\PaymentGateway::AllPay([
 ```
 
 #### New order
+##### !! All order settings must called after create new order, or the `$gw->newOrder()` function will erase all previously order data.
 
 ```php
 // create new order
@@ -118,7 +120,6 @@ $ap = TaiwanPaymentGateway\PaymentGateway::AllPay([
 //  SpGateway: `POST` or `JSON` (default to 'JSON')
 //  AllPay, EcPay: `POST` only
 $gw->newOrder(
-    required:$type,
     required:$merchant_order_no, 
     required:$amount, 
     required:$item_describe, 
@@ -127,14 +128,34 @@ $gw->newOrder(
     optional:$timestamp
 );
 
-// set email (for spgateway)
-$gw->setEmail('bonjour@voicetube.com');
+// Available payment method
+$gw->useBarCode();
+$gw->useWebATM();
+$gw->useCredit();
+$gw->useTenPay(); // AllPay only
+$gw->useTopUp(); // AllPay only
+$gw->useATM();
+$gw->useCVS();
+$gw->useALL(); // AllPay, EcPay only
 
-// Some settings
+// spgateway only settings
+$gw->setEmail('bonjour@voicetube.com'); // setting user email
+$gw->triggerEmailModify(optional:boolean); // allow user update email address later.
+$gw->onlyLoginMemberCanPay(optional:boolean); // force user must to be login later.
+
+// Order settings
 $gw->setUnionPay();
 $gw->needExtraPaidInfo();
 $gw->setCreditInstallment(required:$months, optional:$total_amount);
 $gw->setOrderExpire(required:$expire_Date);
+
+// It can be using like this
+
+$rId = sprintf("VT%s", time());
+$gw->newOrder($rId, 100, rId, $rId)
+   ->useCredit()
+   ->setUnionPay()
+   ->needExtraPaidInfo();
 
 // generate post form
 $gw->genForm(optional:$auto_submit = true);
@@ -143,11 +164,41 @@ $gw->genForm(optional:$auto_submit = true);
 
 #### Process order result/information
 
+##### Initial the gateway
+
+```php
+/**
+* Use factory to create response or directly new the response
+*/
+
+$gwr = TaiwanPaymentGateway\TaiwanPaymentResponse::create('SpGateway', [
+    'hashKey'       => 'c7fe1bfba42369ec1add502c9917e14d',
+    'hashIV'        => '245a49c8fb5151f0',
+]);
+
+$spr = new TaiwanPaymentGateway\SpGatewayPaymentResponse([
+    'hashKey'       => 'c7fe1bfba42369ec1add502c9917e14d',
+    'hashIV'        => '245a49c8fb5151f0',
+]);
+
+$ecr = new TaiwanPaymentGateway\EcPayPaymentResponse([
+    'hashKey'       => '5294y06JbISpM5x9',
+    'hashIV'        => 'v77hoKGq4kWxNNIS',
+]);
+
+$apr = new TaiwanPaymentGateway\AllPayPaymentResponse([
+    'hashKey'       => '5294y06JbISpM5x9',
+    'hashIV'        => 'v77hoKGq4kWxNNIS',
+]);
+```
+
+##### Check the payment response
+
 ```php
 // processOrder will catch $_POST fields and clean it
 // SpGateway: `POST` or `JSON`
 // AllPay, EcPay: `POST` only
-$result = $gw->processOrder(optional:$type='POST or JSON');
+$result = $spr->processOrder(optional:$type='POST or JSON');
 
 // dump the result
 array(22) {
@@ -200,9 +251,9 @@ array(22) {
 // after processing, check the `matched` field.
 
 // for allpay and ecpay, you will need to call `rspOk` or `rspError`.
-$gw->rspOk();
+$ecr->rspOk();
 // or
-$gw->rspError();
+$apr->rspError(optinal:'Custom error msg');
 
 ```
 
