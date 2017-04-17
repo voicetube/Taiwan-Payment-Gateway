@@ -157,7 +157,7 @@ class SpGatewayPaymentGatewayTest extends \PHPUnit_Framework_TestCase
 		try{
 			$this->testNewOrderJSON();
 			$this->gw->useBarCode()->setConfig('paymentInfoUrl', 0);
-			$this->gw->setEmail('abc@test.com')->genForm();
+			$this->gw->setEmail('abc@test.com')->genForm(true);
 		} catch (\Exception $e) {
 			$this->assertEquals('PaymentInfoURL not set', $e->getMessage());
 		}
@@ -168,7 +168,7 @@ class SpGatewayPaymentGatewayTest extends \PHPUnit_Framework_TestCase
 		try{
 			$this->testNewOrderJSON();
 			$this->gw->useBarCode()->setConfig('paymentInfoUrl', 0);
-			$this->gw->setEmail('abc@test')->genForm();
+			$this->gw->setEmail('abc@test')->genForm(true);
 		} catch (\Exception $e) {
 			$this->assertEquals('Invalid email format', $e->getMessage());
 		}

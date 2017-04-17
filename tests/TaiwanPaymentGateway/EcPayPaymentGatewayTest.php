@@ -94,7 +94,7 @@ class EcPayPaymentGatewayTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->testNewOrder();
 		$this->gw->useCredit()->setUnionPay();
-		$this->assertNotEmpty($this->gw->genForm());
+		$this->assertNotEmpty($this->gw->genForm(true));
 	}
 
 	public function testPaymentMethodNotSet()
@@ -111,7 +111,7 @@ class EcPayPaymentGatewayTest extends \PHPUnit_Framework_TestCase
 		try{
 			$this->testNewOrder();
 			$this->gw->useBarCode()->setConfig('paymentInfoUrl', 0);
-			$this->gw->genForm();
+			$this->gw->genForm(true);
 		} catch (\Exception $e) {
 			$this->assertEquals('PaymentInfoURL not set', $e->getMessage());
 		}

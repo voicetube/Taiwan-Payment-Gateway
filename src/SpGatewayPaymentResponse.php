@@ -95,21 +95,21 @@ class SpGatewayPaymentResponse extends Common\AbstractResponse implements Common
 
     public function matchCheckCode(array $payload = [])
     {
-        $matched_code = $payload['CheckCode'];
+        $matchedCode = $payload['CheckCode'];
 
-        $check_code = [
+        $checkCode = [
             "Amt"             => $payload['Amt'],
             "TradeNo"         => $payload['TradeNo'],
             "MerchantID"      => $payload['MerchantID'],
             "MerchantOrderNo" => $payload['MerchantOrderNo'],
         ];
 
-        ksort($check_code);
+        ksort($checkCode);
 
-        $check_code = array_merge(['HashIV' => $this->hashIV], $check_code, ['HashKey' => $this->hashKey]);
+        $checkCode = array_merge(['HashIV' => $this->hashIV], $checkCode, ['HashKey' => $this->hashKey]);
 
-        $check_str = http_build_query($check_code);
+        $checkStr = http_build_query($checkCode);
 
-        return $matched_code == strtoupper(hash("sha256", $check_str));
+        return $matchedCode == strtoupper(hash("sha256", $checkStr));
     }
 }

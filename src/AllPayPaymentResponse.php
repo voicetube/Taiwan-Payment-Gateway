@@ -8,6 +8,7 @@ class AllPayPaymentResponse extends Common\AbstractResponse implements Common\Re
 {
     public function processOrder($type = 'POST')
     {
+        unset($type);
         return $this->processOrderPost();
     }
 
@@ -77,23 +78,25 @@ class AllPayPaymentResponse extends Common\AbstractResponse implements Common\Re
 
     public function matchCheckCode(array $payload = [])
     {
-        $CheckMacValue = $_POST['CheckMacValue'];
+        $post = $_POST;
 
-        unset($_POST['CheckMacValue']);
+        $checkMacValue = $post['CheckMacValue'];
 
-        uksort($_POST, 'strcasecmp');
+        unset($post['CheckMacValue']);
 
-        $mer_array = array_merge(['HashKey' => $this->hashKey], $_POST, ['HashIV' => $this->hashIV]);
+        uksort($post, 'strcasecmp');
 
-        $check_mer_str = urldecode(http_build_query($mer_array));
+        $merArray = array_merge(['HashKey' => $this->hashKey], $post, ['HashIV' => $this->hashIV]);
 
-        foreach ($this->dot_net_url_encode_mapping as $key => $value) {
-            $check_mer_str = str_replace($key, $value, $check_mer_str);
+        $checkMerStr = urldecode(http_build_query($merArray));
+
+        foreach ($this->urlEncodeMapping as $key => $value) {
+            $checkMerStr = str_replace($key, $value, $checkMerStr);
         }
 
-        $check_mer_str = strtolower(urlencode($check_mer_str));
+        $checkMerStr = strtolower(urlencode($checkMerStr));
 
-        return $CheckMacValue == strtoupper(hash('sha256', $check_mer_str));
+        return $checkMacValue == strtoupper(hash('sha256', $checkMerStr));
     }
 
     public function rspOk()

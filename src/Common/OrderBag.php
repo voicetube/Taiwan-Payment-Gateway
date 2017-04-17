@@ -18,4 +18,6 @@ abstract class OrderBag
 
     protected $order = [];
     protected $parameters = [];
+
+    protected $autoSubmit = true;
 }

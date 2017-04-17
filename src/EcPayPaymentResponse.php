@@ -8,6 +8,7 @@ class EcPayPaymentResponse extends Common\AbstractResponse implements Common\Res
 {
     public function processOrder($type = 'POST')
     {
+        unset($type);
         return $this->processOrderPost();
     }
 
@@ -77,23 +78,23 @@ class EcPayPaymentResponse extends Common\AbstractResponse implements Common\Res
 
     public function matchCheckCode(array $payload = [])
     {
-        $CheckMacValue = $_POST['CheckMacValue'];
+        $checkMacValue = $_POST['CheckMacValue'];
 
         unset($_POST['CheckMacValue']);
 
         uksort($_POST, 'strcasecmp');
 
-        $mer_array = array_merge(['HashKey' => $this->hashKey], $_POST, ['HashIV' => $this->hashIV]);
+        $merArray = array_merge(['HashKey' => $this->hashKey], $_POST, ['HashIV' => $this->hashIV]);
 
-        $check_mer_str = urldecode(http_build_query($mer_array));
+        $checkMerStr = urldecode(http_build_query($merArray));
 
-        foreach ($this->dot_net_url_encode_mapping as $key => $value) {
-            $check_mer_str = str_replace($key, $value, $check_mer_str);
+        foreach ($this->urlEncodeMapping as $key => $value) {
+            $checkMerStr = str_replace($key, $value, $checkMerStr);
         }
 
-        $check_mer_str = strtolower(urlencode($check_mer_str));
+        $checkMerStr = strtolower(urlencode($checkMerStr));
 
-        return $CheckMacValue == strtoupper(hash('sha256', $check_mer_str));
+        return $checkMacValue == strtoupper(hash('sha256', $checkMerStr));
     }
 
     public function rspOk()

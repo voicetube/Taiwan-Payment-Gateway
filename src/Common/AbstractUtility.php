@@ -5,7 +5,7 @@ namespace VoiceTube\TaiwanPaymentGateway\Common;
 abstract class AbstractUtility extends OrderBag
 {
 
-    protected $dot_net_url_encode_mapping;
+    protected $urlEncodeMapping;
 
     public function setArrayConfig($config)
     {
@@ -13,7 +13,7 @@ abstract class AbstractUtility extends OrderBag
             $this->setConfig($key, $value);
         }
 
-        $this->dot_net_url_encode_mapping = [
+        $this->urlEncodeMapping = [
             '%2D' => '-',
             '%5F' => '_',
             '%2E' => '.',

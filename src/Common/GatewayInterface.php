@@ -19,21 +19,21 @@ interface GatewayInterface
 
     /**
      * Set a new order
-     * @param string $merchant_order_no
+     * @param string $merchantOrderNo
      * @param integer|float $amount
-     * @param string $item_describe
-     * @param string $order_comment
-     * @param string $respond_type
+     * @param string $itemDescribe
+     * @param string $orderComment
+     * @param string $respondType
      * @param int $timestamp
      * @throws \InvalidArgumentException
      * @return GatewayInterface
      */
     public function newOrder(
-        $merchant_order_no,
+        $merchantOrderNo,
         $amount,
-        $item_describe,
-        $order_comment,
-        $respond_type,
+        $itemDescribe,
+        $orderComment,
+        $respondType,
         $timestamp = 0
     );
 
@@ -43,23 +43,22 @@ interface GatewayInterface
     public function setUnionPay();
 
     /**
-     * @param integer|string $expire_Date
+     * @param integer|string $expireDate
      * @return GatewayInterface
      */
-    public function setOrderExpire($expire_Date);
+    public function setOrderExpire($expireDate);
 
     /**
      * @param integer|string $months
-     * @param integer $total_amount
      * @return GatewayInterface
      */
-    public function setCreditInstallment($months, $total_amount = 0);
+    public function setCreditInstallment($months);
 
     /**
-     * @param bool $auto_submit
+     * @param bool $autoSubmit
      * @return string
      */
-    public function genForm($auto_submit = true);
+    public function genForm($autoSubmit);
 
     /**
      * @return string

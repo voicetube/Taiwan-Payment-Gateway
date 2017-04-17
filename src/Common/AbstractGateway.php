@@ -16,4 +16,30 @@ abstract class AbstractGateway extends AbstractUtility
     {
         $this->order = [];
     }
+
+    /**
+     * @throws \InvalidArgumentException
+     */
+    protected function argumentChecker()
+    {
+        /**
+         * Argument Check
+         */
+        if (!isset($this->hashIV)) {
+            throw new \InvalidArgumentException('HashIV not set');
+        }
+        if (!isset($this->hashKey)) {
+            throw new \InvalidArgumentException('HashKey not set');
+        }
+        if (!isset($this->merchantId)) {
+            throw new \InvalidArgumentException('MerchantID not set');
+        }
+
+        if (!isset($this->returnUrl)) {
+            throw new \InvalidArgumentException('ReturnURL not set');
+        }
+        if (empty($this->actionUrl)) {
+            throw new \InvalidArgumentException('ActionURL not set');
+        }
+    }
 }

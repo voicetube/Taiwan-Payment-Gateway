@@ -75,9 +75,9 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
      * @param bool $mode
      * @return SpGatewayPaymentGateway
      */
-    public function triggerEmailModify($mode = false)
+    public function triggerEmailModify($mode)
     {
-        $this->order['EmailModify'] = $mode ? 1 : 0;
+        $this->order['EmailModify'] = (!!$mode) ? 1 : 0;
         return $this;
     }
 
@@ -85,37 +85,36 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
      * @param bool $mode
      * @return SpGatewayPaymentGateway
      */
-    public function onlyLoginMemberCanPay($mode = false)
+    public function onlyLoginMemberCanPay($mode)
     {
-        $this->order['LoginType'] = $mode ? 1 : 0;
+        $this->order['LoginType'] = (!!$mode) ? 1 : 0;
         return $this;
     }
 
     /**
      * @param integer $months
-     * @param integer $total_amount
      * @return SpGatewayPaymentGateway
      */
-    public function setCreditInstallment($months, $total_amount = 0)
+    public function setCreditInstallment($months)
     {
         $this->order['InstFlag'] = $months;
         return $this;
     }
 
     /**
-     * @param int|string $expire_Date
+     * @param int|string $expireDate
      * @return SpGatewayPaymentGateway
      */
-    public function setOrderExpire($expire_Date)
+    public function setOrderExpire($expireDate)
     {
-        if (is_numeric($expire_Date)) {
-            $expire_Date = intval($expire_Date);
+        if (is_numeric($expireDate)) {
+            $expireDate = intval($expireDate);
         }
-        if (is_string($expire_Date)) {
-            $expire_Date = intval(strtotime($expire_Date));
+        if (is_string($expireDate)) {
+            $expireDate = intval(strtotime($expireDate));
         }
 
-        $this->order['ExpireDate'] = date('Ymd', $expire_Date);
+        $this->order['ExpireDate'] = date('Ymd', $expireDate);
         return $this;
     }
 
@@ -157,45 +156,31 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
     }
 
     /**
-     * @param string $merchant_order_no
+     * @param string $merchantOrderNo
      * @param float|int $amount
-     * @param string $item_describe
-     * @param string $order_comment
-     * @param string $respond_type
+     * @param string $itemDescribe
+     * @param string $orderComment
+     * @param string $respondType
      * @param int $timestamp
      * @throws \InvalidArgumentException
      * @return SpGatewayPaymentGateway
      */
     public function newOrder(
-        $merchant_order_no,
+        $merchantOrderNo,
         $amount,
-        $item_describe,
-        $order_comment,
-        $respond_type = 'JSON',
+        $itemDescribe,
+        $orderComment,
+        $respondType = 'JSON',
         $timestamp = 0
     ) {
     
         /**
          * Argument Check
          */
-        if (!isset($this->hashIV)) {
-            throw new \InvalidArgumentException('HashIV not set');
-        }
-        if (!isset($this->hashKey)) {
-            throw new \InvalidArgumentException('HashKey not set');
-        }
-        if (!isset($this->merchantId)) {
-            throw new \InvalidArgumentException('MerchantID not set');
-        }
+        $this->argumentChecker();
 
-        if (!isset($this->returnUrl)) {
-            throw new \InvalidArgumentException('ReturnURL not set');
-        }
         if (!isset($this->notifyUrl)) {
             throw new \InvalidArgumentException('NotifyURL not set');
-        }
-        if (!isset($this->actionUrl)) {
-            throw new \InvalidArgumentException('ActionURL not set');
         }
 
         $timestamp = empty($timestamp) ? time() : $timestamp;
@@ -207,14 +192,12 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
         $this->order['LangType'] = 'zh-tw';
         $this->order['TimeStamp'] = $timestamp;
         $this->order['MerchantID'] = $this->merchantId;
-        $this->order['RespondType'] = $respond_type;
+        $this->order['RespondType'] = $respondType;
 
+        $this->order['MerchantOrderNo'] = $merchantOrderNo;
 
-
-        $this->order['MerchantOrderNo'] = $merchant_order_no;
-
-        $this->order['ItemDesc'] = $item_describe;
-        $this->order['OrderComment'] = $order_comment;
+        $this->order['ItemDesc'] = $itemDescribe;
+        $this->order['OrderComment'] = $orderComment;
 
         if (!empty($this->returnUrl)) {
             $this->order['ReturnURL'] = $this->returnUrl;
@@ -232,13 +215,8 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
         return $this;
     }
 
-    /**
-     * @param bool $auto_submit
-     * @return string
-     */
-    public function genForm($auto_submit = true)
+    protected function isPaymentMethodSelected()
     {
-
         if (!isset($this->order['UNIONPAY']) &&
             !isset($this->order['BARCODE']) &&
             !isset($this->order['CREDIT']) &&
@@ -248,6 +226,17 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
         ) {
             throw new \InvalidArgumentException('Payment method not set');
         }
+    }
+
+    /**
+     * @param bool $autoSubmit
+     * @return string
+     */
+    public function genForm($autoSubmit)
+    {
+        $this->autoSubmit = !!$autoSubmit;
+
+        $this->isPaymentMethodSelected();
 
         if (isset($this->order['BARCODE']) ||
             isset($this->order['VACC']) ||
@@ -267,7 +256,7 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
 
         $this->order['CheckValue'] = $this->genCheckValue();
 
-        $formId = sprintf("PG_FORM_GO_%s", sha1(time()));
+        $formId = sprintf("PG_SPGATEWAY_FORM_GO_%s", sha1(time()));
 
         $html = sprintf(
             "<form style='display: none' id='%s' method='post' action='%s'>",
@@ -279,7 +268,7 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
         }
         $html .= "</form>";
 
-        if ($auto_submit) {
+        if ($this->autoSubmit) {
             $html .= sprintf("<script>document.getElementById('%s').submit();</script>", $formId);
         }
 
@@ -291,7 +280,7 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
      */
     public function genCheckValue()
     {
-        $mer_array = [
+        $merArray = [
             'MerchantOrderNo' => $this->order['MerchantOrderNo'],
             'MerchantID'      => $this->merchantId,
             'TimeStamp'       => $this->order['TimeStamp'],
@@ -299,12 +288,12 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
             'Amt'             => $this->order['Amt'],
         ];
 
-        ksort($mer_array);
+        ksort($merArray);
 
-        $mer_array = array_merge(['HashKey' => $this->hashKey], $mer_array, ['HashIV' => $this->hashIV]);
+        $merArray = array_merge(['HashKey' => $this->hashKey], $merArray, ['HashIV' => $this->hashIV]);
 
-        $check_mer_str = http_build_query($mer_array);
+        $checkMerStr = http_build_query($merArray);
 
-        return strtoupper(hash("sha256", $check_mer_str));
+        return strtoupper(hash("sha256", $checkMerStr));
     }
 }
