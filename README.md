@@ -5,8 +5,9 @@ Taiwan Payment Gateway
 
 Created by [VoiceTube](https://www.voicetube.com/)
 
-[![Build Status](https://travis-ci.org/merik-chen/Taiwan-Payment-Gateway.svg?branch=reflow-alpha)](https://travis-ci.org/merik-chen/Taiwan-Payment-Gateway)
+[![Build Status](https://travis-ci.org/merik-chen/Taiwan-Payment-Gateway.svg?branch=master)](https://travis-ci.org/merik-chen/Taiwan-Payment-Gateway)
 [![Test Coverage](https://codeclimate.com/repos/58f2e68ab05ce9025a0023ca/badges/78424a612ed55896c86d/coverage.svg)](https://codeclimate.com/repos/58f2e68ab05ce9025a0023ca/coverage)
+[![Code Climate](https://codeclimate.com/repos/58f2e68ab05ce9025a0023ca/badges/78424a612ed55896c86d/gpa.svg)](https://codeclimate.com/repos/58f2e68ab05ce9025a0023ca/feed)
 
 Features
 --------
