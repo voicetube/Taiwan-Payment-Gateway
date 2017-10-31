@@ -8,22 +8,28 @@
 
 namespace PHPSTORM_META {
 
-    override(\VoiceTube\TaiwanPaymentGateway\TaiwanPaymentGateway::create(''), map(
-        [
+    override(
+        \VoiceTube\TaiwanPaymentGateway\TaiwanPaymentGateway::create(''),
+        map(
+            [
             '' == '@',
             "SpGateway" => \VoiceTube\TaiwanPaymentGateway\SpGatewayPaymentGateway::class,
             "AllPay" => \VoiceTube\TaiwanPaymentGateway\AllPayPaymentGateway::class,
             "EcPay" => \VoiceTube\TaiwanPaymentGateway\EcPayPaymentGateway::class,
-        ]
-    ));
+            ]
+        )
+    );
 
-    override(\VoiceTube\TaiwanPaymentGateway\TaiwanPaymentResponse::create(''), map(
-        [
+    override(
+        \VoiceTube\TaiwanPaymentGateway\TaiwanPaymentResponse::create(''),
+        map(
+            [
             '' == '@',
             "SpGateway" => \VoiceTube\TaiwanPaymentGateway\SpGatewayPaymentResponse::class,
             "AllPay" => \VoiceTube\TaiwanPaymentGateway\AllPayPaymentResponse::class,
             "EcPay" => \VoiceTube\TaiwanPaymentGateway\EcPayPaymentResponse::class,
-        ]
-    ));
+            ]
+        )
+    );
 
 }

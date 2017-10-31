@@ -24,7 +24,9 @@ class EcPayPaymentResponse extends Common\AbstractResponse implements Common\Res
             return false;
         }
 
-        $post = filter_var_array($_POST, [
+        $post = filter_var_array(
+            $_POST,
+            [
             'MerchantID'           => FILTER_SANITIZE_STRING,
             'MerchantTradeNo'      => FILTER_SANITIZE_STRING,
             'RtnCode'              => FILTER_VALIDATE_INT,
@@ -65,7 +67,9 @@ class EcPayPaymentResponse extends Common\AbstractResponse implements Common\Res
             'PayFrom'              => FILTER_SANITIZE_STRING,
             'card4no'              => FILTER_SANITIZE_STRING,
             'card6no'              => FILTER_SANITIZE_STRING,
-        ], false);
+            ],
+            false
+        );
 
         if (!$post['RtnCode']) {
             return false;
@@ -94,7 +98,7 @@ class EcPayPaymentResponse extends Common\AbstractResponse implements Common\Res
 
         $checkMerStr = strtolower(urlencode($checkMerStr));
 
-        return $checkMacValue == strtoupper(hash('sha256', $checkMerStr));
+        return $checkMacValue == strtoupper($this->hashMaker($checkMerStr));
     }
 
     public function rspOk()

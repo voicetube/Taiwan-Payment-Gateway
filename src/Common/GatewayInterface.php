@@ -4,27 +4,29 @@ namespace VoiceTube\TaiwanPaymentGateway\Common;
 
 /**
  * Interface GatewayInterface
+ *
  * @package VoiceTube\TaiwanPaymentGateway\Common
  *
  * @see AbstractGateway
- *
  */
 interface GatewayInterface
 {
     /**
      * Get order array.
+     *
      * @return array
      */
     public function getOrder();
 
     /**
      * Set a new order
-     * @param string $merchantOrderNo
-     * @param integer|float $amount
-     * @param string $itemDescribe
-     * @param string $orderComment
-     * @param string $respondType
-     * @param int $timestamp
+     *
+     * @param  string        $merchantOrderNo
+     * @param  integer|float $amount
+     * @param  string        $itemDescribe
+     * @param  string        $orderComment
+     * @param  string        $respondType
+     * @param  int           $timestamp
      * @throws \InvalidArgumentException
      * @return GatewayInterface
      */

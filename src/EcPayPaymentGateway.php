@@ -9,7 +9,8 @@ class EcPayPaymentGateway extends EcAllPayUtility implements Common\GatewayInter
 
     /**
      * EcPayPaymentGateway constructor.
-     * @param array $config
+     *
+     * @param  array $config
      * @return EcPayPaymentGateway
      */
     public function __construct(array $config = [])
@@ -94,7 +95,7 @@ class EcPayPaymentGateway extends EcAllPayUtility implements Common\GatewayInter
     }
 
     /**
-     * @param integer $months
+     * @param integer       $months
      * @param integer|float $totalAmount
      * @return EcPayPaymentGateway
      */
@@ -156,12 +157,12 @@ class EcPayPaymentGateway extends EcAllPayUtility implements Common\GatewayInter
     }
 
     /**
-     * @param string $merchantOrderNo
+     * @param string    $merchantOrderNo
      * @param float|int $amount
-     * @param string $itemDescribe
-     * @param string $orderComment
-     * @param string $respondType
-     * @param int $timestamp
+     * @param string    $itemDescribe
+     * @param string    $orderComment
+     * @param string    $respondType
+     * @param int       $timestamp
      * @throws \InvalidArgumentException
      * @return EcPayPaymentGateway
      */
@@ -216,6 +217,6 @@ class EcPayPaymentGateway extends EcAllPayUtility implements Common\GatewayInter
 
         $checkMerStr = strtolower(urlencode($checkMerStr));
 
-        return strtoupper(hash('sha256', $checkMerStr));
+        return strtoupper($this->hashMaker($checkMerStr));
     }
 }

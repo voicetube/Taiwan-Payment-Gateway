@@ -6,7 +6,8 @@ interface ResponseInterface
 {
     /**
      * Process the order information from gateway server
-     * @param string $type
+     *
+     * @param  string $type
      * @return array|boolean
      */
     public function processOrder($type = 'JSON');

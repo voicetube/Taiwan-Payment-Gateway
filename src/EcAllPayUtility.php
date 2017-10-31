@@ -23,9 +23,9 @@ class EcAllPayUtility extends Common\AbstractGateway
             throw new \InvalidArgumentException('Payment method not set');
         }
 
-        if ($this->order['ChoosePayment'] == 'BARCODE' ||
-            $this->order['ChoosePayment'] == 'ATM' ||
-            $this->order['ChoosePayment'] == 'CVS'
+        if ($this->order['ChoosePayment'] == 'BARCODE'
+            || $this->order['ChoosePayment'] == 'ATM'
+            || $this->order['ChoosePayment'] == 'CVS'
         ) {
             if (empty($this->paymentInfoUrl)) {
                 throw new \InvalidArgumentException('PaymentInfoURL not set');

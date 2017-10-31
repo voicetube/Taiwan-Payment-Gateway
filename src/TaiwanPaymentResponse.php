@@ -14,8 +14,8 @@ class TaiwanPaymentResponse
     /**
      * Create a new gateway instance
      *
-     * @param string $provider
-     * @param array $config
+     * @param  string $provider
+     * @param  array  $config
      * @throws \RuntimeException If no such gateway is found
      * @return Common\AbstractResponse An object of class $provider is created and returned
      */
