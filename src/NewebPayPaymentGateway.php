@@ -362,8 +362,8 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         $sandbox = !!$sandbox;
 
         $endpoint = $sandbox ?
-            'https://ccore.spgateway.com/API/QueryTradeInfo' :
-            'https://core.spgateway.com/API/QueryTradeInfo';
+            'https://ccore.newebpay.com/API/QueryTradeInfo' :
+            'https://core.newebpay.com/API/QueryTradeInfo';
 
         $client = new Client();
 
