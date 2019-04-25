@@ -12,10 +12,11 @@ namespace PHPSTORM_META {
         \VoiceTube\TaiwanPaymentGateway\TaiwanPaymentGateway::create(''),
         map(
             [
-            '' == '@',
-            "SpGateway" => \VoiceTube\TaiwanPaymentGateway\SpGatewayPaymentGateway::class,
-            "AllPay" => \VoiceTube\TaiwanPaymentGateway\AllPayPaymentGateway::class,
-            "EcPay" => \VoiceTube\TaiwanPaymentGateway\EcPayPaymentGateway::class,
+                '' == '@',
+                "SpGateway" => \VoiceTube\TaiwanPaymentGateway\SpGatewayPaymentGateway::class,
+                "AllPay"    => \VoiceTube\TaiwanPaymentGateway\AllPayPaymentGateway::class,
+                "EcPay"     => \VoiceTube\TaiwanPaymentGateway\EcPayPaymentGateway::class,
+                "NewebPay" => \VoiceTube\TaiwanPaymentGateway\NewebPayPaymentGateway::class,
             ]
         )
     );
@@ -24,10 +25,11 @@ namespace PHPSTORM_META {
         \VoiceTube\TaiwanPaymentGateway\TaiwanPaymentResponse::create(''),
         map(
             [
-            '' == '@',
-            "SpGateway" => \VoiceTube\TaiwanPaymentGateway\SpGatewayPaymentResponse::class,
-            "AllPay" => \VoiceTube\TaiwanPaymentGateway\AllPayPaymentResponse::class,
-            "EcPay" => \VoiceTube\TaiwanPaymentGateway\EcPayPaymentResponse::class,
+                '' == '@',
+                "SpGateway" => \VoiceTube\TaiwanPaymentGateway\SpGatewayPaymentResponse::class,
+                "AllPay"    => \VoiceTube\TaiwanPaymentGateway\AllPayPaymentResponse::class,
+                "EcPay"     => \VoiceTube\TaiwanPaymentGateway\EcPayPaymentResponse::class,
+                "NewebPay" => \VoiceTube\TaiwanPaymentGateway\NewebPayPaymentGateway::class,
             ]
         )
     );
