@@ -221,7 +221,7 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         return $this;
     }
 
-    protected function isPaymentMethodSelected()
+    protected function validateOrder()
     {
         if (!isset($this->order['UNIONPAY'])
             && !isset($this->order['BARCODE'])
@@ -232,17 +232,6 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         ) {
             throw new \InvalidArgumentException('Payment method not set');
         }
-    }
-
-    /**
-     * @param bool $autoSubmit
-     * @return string
-     */
-    public function genForm($autoSubmit)
-    {
-        $this->autoSubmit = !!$autoSubmit;
-
-        $this->isPaymentMethodSelected();
 
         if (isset($this->order['BARCODE'])
             || isset($this->order['VACC'])
@@ -259,6 +248,17 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         if (!isset($this->order['EmailModify'])) {
             $this->order['EmailModify'] = 0;
         }
+    }
+
+    /**
+     * @param bool $autoSubmit
+     * @return string
+     */
+    public function genForm($autoSubmit)
+    {
+        $this->autoSubmit = !!$autoSubmit;
+
+        $this->validateOrder();
 
         if ($this->version >= 1.4) {
             $this->genAesEncryptedPayment();
@@ -275,7 +275,7 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
             $this->order['CheckValue'] = $this->genCheckValue();
         }
 
-        $formId = sprintf("PG_SPGATEWAY_FORM_GO_%s", sha1(time()));
+        $formId = sprintf("PG_NEWEBPAY_FORM_GO_%s", sha1(time()));
 
         $html = sprintf(
             "<form style='display: none' id='%s' method='post' action='%s'>",
@@ -299,24 +299,7 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
      */
     public function genFormPostParams()
     {
-        $this->isPaymentMethodSelected();
-
-        if (isset($this->order['BARCODE'])
-            || isset($this->order['VACC'])
-            || isset($this->order['CVS'])
-        ) {
-            if (empty($this->paymentInfoUrl)) {
-                throw new \InvalidArgumentException('paymentInfoUrl not set');
-            }
-        }
-
-        if (!isset($this->order['LoginType'])) {
-            $this->order['LoginType'] = 0;
-        }
-
-        if (!isset($this->order['EmailModify'])) {
-            $this->order['EmailModify'] = 0;
-        }
+        $this->validateOrder();
 
         $this->genAesEncryptedPayment();
 
