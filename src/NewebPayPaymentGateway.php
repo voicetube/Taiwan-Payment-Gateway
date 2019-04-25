@@ -12,7 +12,7 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
 
     /**
      * SpGatewayPaymentGateway constructor.
-  *
+     *
      * @param  array $config
      * @return NewebPayPaymentGateway
      */
@@ -160,12 +160,12 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
     }
 
     /**
-     * @param string    $merchantOrderNo
+     * @param string $merchantOrderNo
      * @param float|int $amount
-     * @param string    $itemDescribe
-     * @param string    $orderComment
-     * @param string    $respondType
-     * @param int       $timestamp
+     * @param string $itemDescribe
+     * @param string $orderComment
+     * @param string $respondType
+     * @param int $timestamp
      * @throws \InvalidArgumentException
      * @return NewebPayPaymentGateway
      */
@@ -176,8 +176,9 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         $orderComment = '',
         $respondType = 'JSON',
         $timestamp = 0
-    ) {
-    
+    )
+    {
+
 
         /**
          * Argument Check
@@ -263,10 +264,10 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
             $this->genAesEncryptedPayment();
 
             $payment = [
-             'MerchantID' => $this->merchantId,
-             'TradeInfo'  => $this->aesPayload,
-             'TradeSha'   => $this->genCheckValue(),
-             'Version'    => $this->version
+                'MerchantID' => $this->merchantId,
+                'TradeInfo'  => $this->aesPayload,
+                'TradeSha'   => $this->genCheckValue(),
+                'Version'    => $this->version,
             ];
 
             $this->order = $payment;
@@ -309,8 +310,8 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
             );
         } else {
             $merArray = [
-             'MerchantOrderNo' => $this->order['MerchantOrderNo'],
-             'MerchantID'      => $this->merchantId,
+                'MerchantOrderNo' => $this->order['MerchantOrderNo'],
+                'MerchantID'      => $this->merchantId,
             ];
 
             switch ($type) {
@@ -351,9 +352,9 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
     }
 
     /**
-     * @param null|string        $merchantOrderNo
+     * @param null|string $merchantOrderNo
      * @param null|integer|float $amount
-     * @param null|boolean       $sandbox
+     * @param null|boolean $sandbox
      * @return bool
      */
     public function getPaymentStatus($merchantOrderNo = null, $amount = null, $sandbox = null)
@@ -361,8 +362,8 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         $sandbox = !!$sandbox;
 
         $endpoint = $sandbox ?
-         'https://ccore.spgateway.com/API/QueryTradeInfo' :
-         'https://core.spgateway.com/API/QueryTradeInfo';
+            'https://ccore.spgateway.com/API/QueryTradeInfo' :
+            'https://core.spgateway.com/API/QueryTradeInfo';
 
         $client = new Client();
 
@@ -376,15 +377,15 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         $result = $client->post(
             $endpoint,
             [
-            'form_params' => [
-            'Amt'             => $amount,
-            'Version'         => '1.1',
-            'TimeStamp'       => time(),
-            'MerchantID'      => $this->merchantId,
-            'CheckValue'      => $code,
-            'RespondType'     => 'JSON',
-            'MerchantOrderNo' => $merchantOrderNo,
-            ]
+                'form_params' => [
+                    'Amt'             => $amount,
+                    'Version'         => '1.1',
+                    'TimeStamp'       => time(),
+                    'MerchantID'      => $this->merchantId,
+                    'CheckValue'      => $code,
+                    'RespondType'     => 'JSON',
+                    'MerchantOrderNo' => $merchantOrderNo,
+                ],
             ]
         );
 
