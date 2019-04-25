@@ -170,7 +170,7 @@ class EcPayPaymentGateway extends EcAllPayUtility implements Common\GatewayInter
         $merchantOrderNo,
         $amount,
         $itemDescribe,
-        $orderComment,
+        $orderComment = '',
         $respondType = 'POST',
         $timestamp = 0
     ) {

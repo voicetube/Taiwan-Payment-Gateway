@@ -34,8 +34,8 @@ interface GatewayInterface
         $merchantOrderNo,
         $amount,
         $itemDescribe,
-        $orderComment,
-        $respondType,
+        $orderComment = '',
+        $respondType = 'JSON',
         $timestamp = 0
     );
 

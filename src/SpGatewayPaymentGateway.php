@@ -173,7 +173,7 @@ class SpGatewayPaymentGateway extends Common\AbstractGateway implements Common\G
         $merchantOrderNo,
         $amount,
         $itemDescribe,
-        $orderComment,
+        $orderComment = '',
         $respondType = 'JSON',
         $timestamp = 0
     ) {
