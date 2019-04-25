@@ -295,6 +295,47 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
     }
 
     /**
+     * @return array
+     */
+    public function genFormPostParams()
+    {
+        $this->isPaymentMethodSelected();
+
+        if (isset($this->order['BARCODE'])
+            || isset($this->order['VACC'])
+            || isset($this->order['CVS'])
+        ) {
+            if (empty($this->paymentInfoUrl)) {
+                throw new \InvalidArgumentException('paymentInfoUrl not set');
+            }
+        }
+
+        if (!isset($this->order['LoginType'])) {
+            $this->order['LoginType'] = 0;
+        }
+
+        if (!isset($this->order['EmailModify'])) {
+            $this->order['EmailModify'] = 0;
+        }
+
+        $this->genAesEncryptedPayment();
+
+        $this->parameters = [
+            'MerchantID' => $this->merchantId,
+            'TradeInfo'  => $this->aesPayload,
+            'TradeSha'   => $this->genCheckValue(),
+            'Version'    => $this->version,
+        ];
+
+        $formPost = [
+            'endpoint' => $this->actionUrl,
+            'params'   => $this->parameters,
+        ];
+
+        return $formPost;
+    }
+
+    /**
      * @param string $type
      * @return string
      */
