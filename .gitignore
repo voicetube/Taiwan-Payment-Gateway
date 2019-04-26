@@ -6,3 +6,5 @@ test*.*
 report/
 build/
 .travis.yml.bak
+.phpstorm.meta.php
+src/.phpstorm.meta.php/voicetube.taiwan.payment.gateway.phpstorm.meta.php
