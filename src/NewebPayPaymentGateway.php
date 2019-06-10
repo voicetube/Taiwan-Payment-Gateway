@@ -176,8 +176,7 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         $orderComment = '',
         $respondType = 'JSON',
         $timestamp = 0
-    ) 
-    {
+    ) {
 
         /**
          * Argument Check
@@ -253,8 +252,7 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         $merchantOrderNo,
         $amount,
         $respondType = 'JSON',
-        $timestamp = 0) 
-    {
+        $timestamp = 0) {
         /**
          * Argument Check
          */
@@ -307,7 +305,7 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
 
             $payment = [
                 'MerchantID_' => $this->merchantId,
-                'PostData_'  => $this->aesPayload,
+                'PostData_'   => $this->aesPayload,
             ];
 
             $this->order = $payment;
@@ -315,14 +313,14 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
             $this->validateOrder();
             if ($this->version >= 1.4) {
                 $this->genAesEncryptedPayment();
-    
+
                 $payment = [
                     'MerchantID' => $this->merchantId,
                     'TradeInfo'  => $this->aesPayload,
                     'TradeSha'   => $this->genCheckValue(),
                     'Version'    => $this->version,
                 ];
-    
+
                 $this->order = $payment;
             } else {
                 $this->order['CheckValue'] = $this->genCheckValue();
@@ -348,20 +346,19 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         return $html;
     }
 
-
     /**
      * @return array
      */
     public function genFormPostParams($type = 'payment')
     {
         $this->genAesEncryptedPayment();
-        
+
         if ($type === 'refund') {
             $this->validateRefund();
-    
+
             $this->parameters = [
                 'MerchantID_' => $this->merchantId,
-                'PostData_'  => $this->aesPayload,
+                'PostData_'   => $this->aesPayload,
             ];
         } else {
             $this->validateOrder();
@@ -450,8 +447,8 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         $sandbox = !!$sandbox;
 
         $endpoint = $sandbox ?
-            'https://ccore.newebpay.com/API/QueryTradeInfo' :
-            'https://core.newebpay.com/API/QueryTradeInfo';
+        'https://ccore.newebpay.com/API/QueryTradeInfo' :
+        'https://core.newebpay.com/API/QueryTradeInfo';
 
         $client = new Client();
 
