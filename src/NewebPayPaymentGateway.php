@@ -176,9 +176,8 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         $orderComment = '',
         $respondType = 'JSON',
         $timestamp = 0
-    )
+    ) 
     {
-
 
         /**
          * Argument Check
@@ -250,29 +249,84 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         }
     }
 
+    public function newRefund(
+        $merchantOrderNo,
+        $amount,
+        $respondType = 'JSON',
+        $timestamp = 0) 
+    {
+        /**
+         * Argument Check
+         */
+
+        if (!isset($this->notifyUrl)) {
+            throw new \InvalidArgumentException('NotifyURL not set');
+        }
+
+        $timestamp = empty($timestamp) ? time() : $timestamp;
+
+        $this->clearOrder();
+
+        $this->order['Amt'] = intval($amount);
+        $this->order['Version'] = $this->version;
+        $this->order['TimeStamp'] = $timestamp;
+        $this->order['MerchantID'] = $this->merchantId;
+        $this->order['RespondType'] = $respondType;
+        $this->order['MerchantOrderNo'] = $merchantOrderNo;
+
+        if (!empty($this->order['MerchantOrderNo'])) {
+            $this->order['IndexType'] = 1;
+        }
+
+        return $this;
+    }
+
+    protected function validateRefund()
+    {
+        if (!isset($this->order['Amt'])
+            && !isset($this->order['Version'])
+            && !isset($this->order['MerchantOrderNo'])
+            && !isset($this->order['IndexType'])
+            && !isset($this->order['TimeStamp'])
+            && !isset($this->order['NotifyURL'])
+        ) {
+            throw new \InvalidArgumentException('Param not set');
+        }
+    }
+
     /**
      * @param bool $autoSubmit
      * @return string
      */
-    public function genForm($autoSubmit)
+    public function genForm($autoSubmit, $type = 'payment')
     {
         $this->autoSubmit = !!$autoSubmit;
-
-        $this->validateOrder();
-
-        if ($this->version >= 1.4) {
+        if ($type === 'refund') {
+            $this->validateRefund();
             $this->genAesEncryptedPayment();
 
             $payment = [
-                'MerchantID' => $this->merchantId,
-                'TradeInfo'  => $this->aesPayload,
-                'TradeSha'   => $this->genCheckValue(),
-                'Version'    => $this->version,
+                'MerchantID_' => $this->merchantId,
+                'PostData_'  => $this->aesPayload,
             ];
 
             $this->order = $payment;
         } else {
-            $this->order['CheckValue'] = $this->genCheckValue();
+            $this->validateOrder();
+            if ($this->version >= 1.4) {
+                $this->genAesEncryptedPayment();
+    
+                $payment = [
+                    'MerchantID' => $this->merchantId,
+                    'TradeInfo'  => $this->aesPayload,
+                    'TradeSha'   => $this->genCheckValue(),
+                    'Version'    => $this->version,
+                ];
+    
+                $this->order = $payment;
+            } else {
+                $this->order['CheckValue'] = $this->genCheckValue();
+            }
         }
 
         $formId = sprintf("PG_NEWEBPAY_FORM_GO_%s", sha1(time()));
@@ -294,21 +348,31 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         return $html;
     }
 
+
     /**
      * @return array
      */
-    public function genFormPostParams()
+    public function genFormPostParams($type = 'payment')
     {
-        $this->validateOrder();
-
         $this->genAesEncryptedPayment();
+        
+        if ($type === 'refund') {
+            $this->validateRefund();
+    
+            $this->parameters = [
+                'MerchantID_' => $this->merchantId,
+                'PostData_'  => $this->aesPayload,
+            ];
+        } else {
+            $this->validateOrder();
 
-        $this->parameters = [
-            'MerchantID' => $this->merchantId,
-            'TradeInfo'  => $this->aesPayload,
-            'TradeSha'   => $this->genCheckValue(),
-            'Version'    => $this->version,
-        ];
+            $this->parameters = [
+                'MerchantID' => $this->merchantId,
+                'TradeInfo'  => $this->aesPayload,
+                'TradeSha'   => $this->genCheckValue(),
+                'Version'    => $this->version,
+            ];
+        }
 
         $formPost = [
             'endpoint' => $this->actionUrl,
