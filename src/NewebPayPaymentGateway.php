@@ -7,8 +7,9 @@ use VoiceTube\TaiwanPaymentGateway\Common;
 
 class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\GatewayInterface
 {
-
     private $aesPayload;
+    const TYPE_CODE_FOR_MERCHANTORDERNO = 1;
+    const TYPE_CODE_FOR_TRADNO = 2; 
 
     /**
      * SpGatewayPaymentGateway constructor.
@@ -176,9 +177,7 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         $orderComment = '',
         $respondType = 'JSON',
         $timestamp = 0
-    )
-    {
-
+    ) {
 
         /**
          * Argument Check
@@ -250,29 +249,100 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         }
     }
 
+    public function newRefund(
+        $merchantOrderNo,
+        $amount,
+        $respondType = 'JSON',
+        $timestamp = 0) 
+    {
+        /**
+         * Argument Check
+         */
+
+        if (!isset($this->notifyUrl)) {
+            throw new \InvalidArgumentException('NotifyURL not set');
+        }
+
+        $timestamp = empty($timestamp) ? time() : $timestamp;
+
+        $this->clearOrder();
+
+        $this->order['Amt'] = intval($amount);
+        $this->order['Version'] = $this->version;
+        $this->order['TimeStamp'] = $timestamp;
+        $this->order['MerchantID'] = $this->merchantId;
+        $this->order['RespondType'] = $respondType;
+        $this->order['MerchantOrderNo'] = $merchantOrderNo;
+
+        if (!empty($this->order['MerchantOrderNo'])) {
+            $this->order['IndexType'] = self::TYPE_CODE_FOR_MERCHANTORDERNO;
+        }
+
+        return $this;
+    }
+
+    protected function validateRefund()
+    {
+        if (!isset($this->order['Amt'])) {
+            throw new \InvalidArgumentException('Amt not set');
+        }
+
+        if (!isset($this->order['Version'])) {
+            throw new \InvalidArgumentException('API Version not set');
+        }
+
+        if (!isset($this->order['MerchantOrderNo'])) {
+            throw new \InvalidArgumentException('MerchantOrderNo not set');
+        }
+
+        if (!isset($this->order['IndexType'])) {
+            throw new \InvalidArgumentException('IndexType not set');
+        }
+
+        if (!isset($this->order['TimeStamp'])) {
+            throw new \InvalidArgumentException('TimeStamp not set');
+        }
+
+        if (!isset($this->order['NotifyURL'])) {
+            throw new \InvalidArgumentException('NotifyURL not set');
+        }
+    }
+
     /**
      * @param bool $autoSubmit
      * @return string
      */
-    public function genForm($autoSubmit)
+    public function genForm($autoSubmit, $type = 'payment')
     {
         $this->autoSubmit = !!$autoSubmit;
-
-        $this->validateOrder();
-
-        if ($this->version >= 1.4) {
+        if ($type === 'refund') {
+            $this->validateRefund();
             $this->genAesEncryptedPayment();
 
             $payment = [
-                'MerchantID' => $this->merchantId,
-                'TradeInfo'  => $this->aesPayload,
-                'TradeSha'   => $this->genCheckValue(),
-                'Version'    => $this->version,
+                'MerchantID_' => $this->merchantId,
+                'PostData_'   => $this->aesPayload,
             ];
 
             $this->order = $payment;
+        } elseif ($type === 'payment') {
+            $this->validateOrder();
+            if ($this->version >= 1.4) {
+                $this->genAesEncryptedPayment();
+
+                $payment = [
+                    'MerchantID' => $this->merchantId,
+                    'TradeInfo'  => $this->aesPayload,
+                    'TradeSha'   => $this->genCheckValue(),
+                    'Version'    => $this->version,
+                ];
+
+                $this->order = $payment;
+            } else {
+                $this->order['CheckValue'] = $this->genCheckValue();
+            }
         } else {
-            $this->order['CheckValue'] = $this->genCheckValue();
+            throw new \InvalidArgumentException('unkown payment type');
         }
 
         $formId = sprintf("PG_NEWEBPAY_FORM_GO_%s", sha1(time()));
@@ -297,18 +367,29 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
     /**
      * @return array
      */
-    public function genFormPostParams()
+    public function genFormPostParams($type = 'payment')
     {
-        $this->validateOrder();
-
         $this->genAesEncryptedPayment();
 
-        $this->parameters = [
-            'MerchantID' => $this->merchantId,
-            'TradeInfo'  => $this->aesPayload,
-            'TradeSha'   => $this->genCheckValue(),
-            'Version'    => $this->version,
-        ];
+        if ($type === 'refund') {
+            $this->validateRefund();
+
+            $this->parameters = [
+                'MerchantID_' => $this->merchantId,
+                'PostData_'   => $this->aesPayload,
+            ];
+        } elseif ($type === 'payment') {
+            $this->validateOrder();
+
+            $this->parameters = [
+                'MerchantID' => $this->merchantId,
+                'TradeInfo'  => $this->aesPayload,
+                'TradeSha'   => $this->genCheckValue(),
+                'Version'    => $this->version,
+            ];
+        } else {
+            throw new \InvalidArgumentException('unkown payment type');
+        }
 
         $formPost = [
             'endpoint' => $this->actionUrl,
