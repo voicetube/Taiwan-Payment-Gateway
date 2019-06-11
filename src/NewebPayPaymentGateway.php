@@ -252,7 +252,8 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         $merchantOrderNo,
         $amount,
         $respondType = 'JSON',
-        $timestamp = 0) {
+        $timestamp = 0) 
+    {
         /**
          * Argument Check
          */
@@ -281,14 +282,28 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
 
     protected function validateRefund()
     {
-        if (!isset($this->order['Amt'])
-            && !isset($this->order['Version'])
-            && !isset($this->order['MerchantOrderNo'])
-            && !isset($this->order['IndexType'])
-            && !isset($this->order['TimeStamp'])
-            && !isset($this->order['NotifyURL'])
-        ) {
-            throw new \InvalidArgumentException('Param not set');
+        if (!isset($this->order['Amt'])) {
+            throw new \InvalidArgumentException('Amt not set');
+        }
+
+        if (!isset($this->order['Version'])) {
+            throw new \InvalidArgumentException('API Version not set');
+        }
+
+        if (!isset($this->order['MerchantOrderNo'])) {
+            throw new \InvalidArgumentException('MerchantOrderNo not set');
+        }
+
+        if (!isset($this->order['IndexType'])) {
+            throw new \InvalidArgumentException('IndexType not set');
+        }
+
+        if (!isset($this->order['TimeStamp'])) {
+            throw new \InvalidArgumentException('TimeStamp not set');
+        }
+
+        if (!isset($this->order['NotifyURL'])) {
+            throw new \InvalidArgumentException('NotifyURL not set');
         }
     }
 
@@ -309,7 +324,7 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
             ];
 
             $this->order = $payment;
-        } else {
+        } elseif ($type === 'payment') {
             $this->validateOrder();
             if ($this->version >= 1.4) {
                 $this->genAesEncryptedPayment();
@@ -325,6 +340,8 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
             } else {
                 $this->order['CheckValue'] = $this->genCheckValue();
             }
+        } else {
+            throw new \InvalidArgumentException('unkown payment type');
         }
 
         $formId = sprintf("PG_NEWEBPAY_FORM_GO_%s", sha1(time()));
@@ -360,7 +377,7 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
                 'MerchantID_' => $this->merchantId,
                 'PostData_'   => $this->aesPayload,
             ];
-        } else {
+        } elseif ($type === 'payment') {
             $this->validateOrder();
 
             $this->parameters = [
@@ -369,6 +386,8 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
                 'TradeSha'   => $this->genCheckValue(),
                 'Version'    => $this->version,
             ];
+        } else {
+            throw new \InvalidArgumentException('unkown payment type');
         }
 
         $formPost = [
@@ -447,8 +466,8 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         $sandbox = !!$sandbox;
 
         $endpoint = $sandbox ?
-        'https://ccore.newebpay.com/API/QueryTradeInfo' :
-        'https://core.newebpay.com/API/QueryTradeInfo';
+            'https://ccore.newebpay.com/API/QueryTradeInfo' :
+            'https://core.newebpay.com/API/QueryTradeInfo';
 
         $client = new Client();
 
