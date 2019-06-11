@@ -7,8 +7,9 @@ use VoiceTube\TaiwanPaymentGateway\Common;
 
 class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\GatewayInterface
 {
-
     private $aesPayload;
+    const TYPE_CODE_FOR_MERCHANTORDERNO = 1;
+    const TYPE_CODE_FOR_TRADNO = 2; 
 
     /**
      * SpGatewayPaymentGateway constructor.
@@ -274,7 +275,7 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         $this->order['MerchantOrderNo'] = $merchantOrderNo;
 
         if (!empty($this->order['MerchantOrderNo'])) {
-            $this->order['IndexType'] = 1;
+            $this->order['IndexType'] = self::TYPE_CODE_FOR_MERCHANTORDERNO;
         }
 
         return $this;
