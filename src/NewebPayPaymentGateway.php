@@ -273,6 +273,7 @@ class NewebPayPaymentGateway extends Common\AbstractGateway implements Common\Ga
         $this->order['MerchantID'] = $this->merchantId;
         $this->order['RespondType'] = $respondType;
         $this->order['MerchantOrderNo'] = $merchantOrderNo;
+        $this->order['NotifyURL'] = $this->notifyUrl;
 
         if (!empty($this->order['MerchantOrderNo'])) {
             $this->order['IndexType'] = self::TYPE_CODE_FOR_MERCHANTORDERNO;
