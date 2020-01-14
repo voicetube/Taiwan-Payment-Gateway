@@ -3,24 +3,22 @@
     "description": "A payment gateway library for Taiwan.",
     "keywords": ["VoiceTube", "payment", "gateway", "Taiwan"],
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Merik Chen",
-            "email": "merik@voicetube.com"
-        }
-    ],
+    "authors": [{
+        "name": "VoiceTube Corporation",
+        "email": "backend@voicetube.com"
+    }],
     "type": "project",
     "require": {
-		"php": ">=5.5",
-        "guzzlehttp/guzzle": "^6.2"
+        "php": ">=5.5",
+        "guzzlehttp/guzzle": "^6.5"
     },
-	"require-dev": {
-		"phpunit/phpunit": "4.8.*",
+    "require-dev": {
+        "phpunit/phpunit": "4.8.*",
         "squizlabs/php_codesniffer": "^2.8",
         "codeclimate/php-test-reporter": "^0.4.4",
         "phpmd/phpmd": "^2.6"
     },
-	"autoload": {
+    "autoload": {
         "psr-4": {
             "VoiceTube\\TaiwanPaymentGateway\\": "src/"
         }
