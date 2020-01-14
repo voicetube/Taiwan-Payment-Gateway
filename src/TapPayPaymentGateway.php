@@ -55,28 +55,30 @@ class TapPayPaymentGateway
     }
 
     /**
-     * @param bool $checkPhoneNumber
-     * @param bool $checkNationalId
+     * @param string $frontendRedirectUrl
+     * @param string $backendNotifyUrl
      * @return TapPayPaymentGateway
      */
-    public function setResultUrl($checkPhoneNumber, $checkNationalId)
+    public function setResultUrl($frontendRedirectUrl, $backendNotifyUrl)
     {
         $this->resultUrl = [
-            'phone_number' => $checkPhoneNumber,
-            'national_id' => $checkNationalId,
+            'frontend_redirect_url' => $frontendRedirectUrl,
+            'backend_notify_url' => $backendNotifyUrl,
         ];
 
         return $this;
     }
 
     /**
+     * @param bool $checkPhoneNumber
+     * @param bool $checkNationalId
      * @return TapPayPaymentGateway
      */
-    public function setCardholderVerify($frontendRedirectUrl, $backendNotifyUrl)
+    public function setCardholderVerify($checkPhoneNumber, $checkNationalId)
     {
         $this->cardholderVerify = [
-            'frontend_redirect_url' => $frontendRedirectUrl,
-            'backend_notify_url' => $backendNotifyUrl,
+            'phone_number' => $checkPhoneNumber,
+            'national_id' => $checkNationalId,
         ];
 
         return $this;
