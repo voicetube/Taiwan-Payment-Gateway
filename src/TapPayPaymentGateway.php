@@ -45,7 +45,7 @@ class TapPayPaymentGateway
     }
 
     /**
-     * @param integer       $months
+     * @param integer $months
      * @return TapPayPaymentGateway
      */
     public function setCreditInstallment($months)
@@ -55,7 +55,8 @@ class TapPayPaymentGateway
     }
 
     /**
-     * @param integer       $months
+     * @param bool $checkPhoneNumber
+     * @param bool $checkNationalId
      * @return TapPayPaymentGateway
      */
     public function setResultUrl($checkPhoneNumber, $checkNationalId)
@@ -123,7 +124,6 @@ class TapPayPaymentGateway
      * @param string    $orderComment
      * @param string    $respondType
      * @param int       $timestamp
-     * @throws \InvalidArgumentException
      * @return TapPayPaymentGateway
      */
     public function newOrder(
@@ -195,28 +195,9 @@ class TapPayPaymentGateway
     }
 
     /**
-     * @return json
+     * @return array
      */
     public function sendPrimeOrder($url, $order)
-    {
-        $headers = [
-            'x-api-key' => $order['partner_key'],
-        ];
-
-        $dataToSend = $order;
-
-        $client = new Client();
-
-        return $client->post($url, [
-            'headers' => $headers,
-            'json' => $dataToSend,
-        ]);
-    }
-
-    /**
-     * @return json
-     */
-    public function sendTokenOrder($url, $order, $card)
     {
         $headers = [
             'x-api-key' => $order['partner_key'],
