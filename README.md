@@ -32,6 +32,21 @@ Available Gateway
 * [歐付寶 allPay](https://www.allpay.com.tw/)
 * [綠界 ECPay](https://www.ecpay.com.tw)
 
+How to use dev private branch
+----------
+
+add repositories property into composer.json
+```
+"repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/voicetube/Taiwan-Payment-Gateway.git"
+    }
+  ],
+```
+
+##### your require property shuold add dev preifx:  
+`"voicetube/taiwan-payment-gateway": "dev-branchName",`
 
 
 How to use
