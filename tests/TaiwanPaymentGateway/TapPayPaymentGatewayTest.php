@@ -4,7 +4,7 @@ namespace TaiwanPaymentGateway;
 
 use VoiceTube\TaiwanPaymentGateway\TapPayPaymentGateway;
 
-class TapPayPaymentGatewayTest extends \PHPUnit_Framework_TestCase
+class TapPayPaymentGatewayTest extends \PHPUnit\Framework\TestCase
 {
 	protected $gw;
 	protected $order = [

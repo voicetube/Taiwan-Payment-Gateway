@@ -10,7 +10,7 @@ namespace TaiwanPaymentGateway;
 
 use VoiceTube\TaiwanPaymentGateway\EcPayPaymentResponse;
 
-class EcPayPaymentResponseTest extends \PHPUnit_Framework_TestCase
+class EcPayPaymentResponseTest extends \PHPUnit\Framework\TestCase
 {
 	protected $config = [
 		'hashKey'       => '5294y06JbISpM5x9',
