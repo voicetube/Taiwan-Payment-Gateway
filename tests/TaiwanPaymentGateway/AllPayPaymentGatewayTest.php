@@ -10,7 +10,7 @@ namespace TaiwanPaymentGateway;
 
 use VoiceTube\TaiwanPaymentGateway\AllPayPaymentGateway;
 
-class AllPayPaymentGatewayTest extends \PHPUnit_Framework_TestCase
+class AllPayPaymentGatewayTest extends \PHPUnit\Framework\TestCase
 {
 	protected $gw;
 	protected $order = [

@@ -10,7 +10,7 @@ namespace TaiwanPaymentGateway;
 
 use VoiceTube\TaiwanPaymentGateway\TaiwanPaymentGateway;
 
-class TaiwanPaymentGatewayTest extends \PHPUnit_Framework_TestCase
+class TaiwanPaymentGatewayTest extends \PHPUnit\Framework\TestCase
 {
 	protected $gw;
 

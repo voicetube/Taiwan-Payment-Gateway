@@ -11,7 +11,7 @@ namespace TaiwanPaymentGateway;
 use VoiceTube\TaiwanPaymentGateway\TaiwanPaymentResponse;
 use VoiceTube\TaiwanPaymentGateway\SpGatewayPaymentResponse;
 
-class SpGatewayPaymentResponseTest extends \PHPUnit_Framework_TestCase
+class SpGatewayPaymentResponseTest extends \PHPUnit\Framework\TestCase
 {
 
 	public function testConstruct()
